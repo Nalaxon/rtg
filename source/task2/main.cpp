@@ -9,13 +9,13 @@
 
 int main(int argc, char* argv[])
 {
-    //char* VERTEX_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task1\\vertexshader.glsl";
-	//char* FRAGMENT_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task1\\fragmentshader.glsl";
-	const char* VERTEX_SHADER_SOURCE = "./source/task1/vertexshader.glsl";
-	const char* FRAGMENT_SHADER_SOURCE = "./source/task1/fragmentshader.glsl";
+    const char* VERTEX_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task2\\vertexshader.glsl";
+	const char* FRAGMENT_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task2\\fragmentshader.glsl";
+	//const char* VERTEX_SHADER_SOURCE = "./source/task1/vertexshader.glsl";
+	//const char* FRAGMENT_SHADER_SOURCE = "./source/task1/fragmentshader.glsl";
 	try
 	{
-		GL::platform::Window window("Assignment 1 — The first triangle", 800, 600, 0, 0, false, 1, 3);
+		GL::platform::Window window("Assignment 2 — More complex shapes", 800, 600, 0, 0, false, 3, 3);
 
 		Renderer renderer(window);
 		renderer.resize(800, 600);
