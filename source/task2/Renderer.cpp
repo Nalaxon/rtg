@@ -159,9 +159,9 @@ void Renderer::createVertexBuffers(void)
 
 	//Triangle
 	GLfloat triangle[] = {
-		0.8f, -0.8f, 0.0f,
-		0.0f, 0.8f, 0.0f,
-		-0.8f, -0.8f, 0.0f
+		0.5f, 0.0f, 0.0f,
+		0.4f, 0.2f, 0.0f,
+		0.0f, 0.0f, 0.0f,
 	};
 	
 	glGenBuffers(1, &vTriangleId);
