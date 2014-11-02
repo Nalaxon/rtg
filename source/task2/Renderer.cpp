@@ -36,6 +36,17 @@ void Renderer::render()
 	
 	// Draw the triangle !
 	glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
+	glDrawArrays(GL_TRIANGLES, 3, 3);
+	glDrawArrays(GL_TRIANGLES, 6, 3);
+	glDrawArrays(GL_TRIANGLES, 9, 3);
+	glDrawArrays(GL_TRIANGLES, 12, 3);
+	glDrawArrays(GL_TRIANGLES, 15, 3);
+	glDrawArrays(GL_TRIANGLES, 18, 3);
+	glDrawArrays(GL_TRIANGLES, 21, 3);
+	glDrawArrays(GL_TRIANGLES, 24, 3);
+	glDrawArrays(GL_TRIANGLES, 27, 3);
+	glDrawArrays(GL_TRIANGLES, 30, 3);
+	glDrawArrays(GL_TRIANGLES, 33, 3);
 	context.swapBuffers();
 }
 
@@ -157,11 +168,44 @@ void Renderer::createVertexBuffers(void)
 	glGenVertexArrays(1, &vaoId);
 	glBindVertexArray(vaoId);
 
-	//Triangle
+	//dodecagon
 	GLfloat triangle[] = {
-		0.5f, 0.0f, 0.0f,
-		0.4f, 0.2f, 0.0f,
+		0.6f, 0.0f, 0.0f,  //frist triangle, right x=0
+		0.52f, 0.3f, 0.0f,
+		0.0f, 0.0f, 0.0f,  
+		0.52f, 0.3f, 0.0f,  //second
+		0.3f, 0.52f, 0.0f,
+		0.0f, 0.0f, 0.0f,  
+		0.3f, 0.52f, 0.0f,  //thired
+		0.0f, 0.6f, 0.0f,
 		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,    //fourth
+		0.0f, 0.6f, 0.0f,
+		-0.3f, 0.52f, 0.0f,
+		0.0f, 0.0f, 0.0f,   //fived
+		-0.3f, 0.52f, 0.0f,
+		-0.52f, 0.3f, 0.0f,
+		0.0f, 0.0f, 0.0f,  //sixed
+		-0.52f, 0.3f, 0.0f,
+		-0.6f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,  //seventh
+		-0.6f, -0.f, 0.0f,
+		-0.52f, -0.3f, 0.0f,
+		0.0f, 0.0f, 0.0f,  // eighted
+		-0.52, -0.3f, 0.0f,
+		-0.3f, -0.52f, 0.0f,
+		0.0f, 0.f, 0.0f,  //nined
+		-0.3f, -0.52f, 0.0f,
+		0.0f, -0.6f, 0.0f,
+		0.3f, -0.52f, 0.0f,  // tenth
+		0.0f, 0.0f, 0.0f,
+		0.0f, -0.6f, 0.0f,
+		0.52f, -0.3f, 0.0f,  //elefenth
+		0.0f, 0.0f, 0.0f,
+		0.3f, -0.52f, 0.0f,
+		0.6f, 0.0f, 0.0f, //twelfth
+		0.0f, 0.0f, 0.0f,
+		0.52f, -0.3f, 0.0f,
 	};
 	
 	glGenBuffers(1, &vTriangleId);
