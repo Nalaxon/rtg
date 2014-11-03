@@ -23,6 +23,7 @@ private:
 	GLuint fragmentShaderObject;
 	GLuint vaoId;
 	GLuint vTriangleId;
+	GLuint ColorBufferId;
 
 public:
 	Renderer(const Renderer&) = delete;

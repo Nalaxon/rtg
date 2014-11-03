@@ -20,6 +20,7 @@ int main(int argc, char* argv[])
 		Renderer renderer(window);
 		renderer.resize(800, 600);
 
+		std::cout << "OpenGl Version: " << glGetString(GL_VERSION) << std::endl;
 
 		renderer.createShader(VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
 		renderer.createVertexBuffers();

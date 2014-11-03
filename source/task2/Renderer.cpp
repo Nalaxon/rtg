@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <GL\GL.h>
+#include <GL\gl.h>
 
 Renderer::Renderer(GL::platform::Window& window)
 	: context(window)
@@ -77,7 +77,6 @@ int unloadshader(GLubyte** ShaderSource)
 
 void Renderer::createShader(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
-    std::cout << "entered setUpShader()" << std::endl;
 	GLint result = GL_FALSE;
 	int infoLogLength;
 	std::string vertexShaderSource, fragmentShaderSource;
@@ -169,6 +168,7 @@ void Renderer::createVertexBuffers(void)
 	glBindVertexArray(vaoId);
 
 	//dodecagon
+	//x_i = r * cos(w_i)   y_i = r * sin(w_i)
 	GLfloat triangle[] = {
 		0.6f, 0.0f, 0.0f,  //frist triangle, right x=0
 		0.52f, 0.3f, 0.0f,
@@ -207,12 +207,68 @@ void Renderer::createVertexBuffers(void)
 		0.0f, 0.0f, 0.0f,
 		0.52f, -0.3f, 0.0f,
 	};
+	//interpolated colors
+	GLfloat Colors[] = {	
+		1.0f,  0.0f,  0.0f, 1.0f,
+		0.75f, 0.25f, 0.0f, 1.0f,
+		1.0f,  1.0f,  1.0f,    1.0f,
+
+		0.75f, 0.25f, 0.0f, 1.0f,  //2
+		0.5f,  0.5f,  0.0f,    1.0f,
+		1.0f,  1.0f,  1.0f, 1.0f,
+
+		0.5f,  0.5,   0.0f,    1.0f,  //3
+		0.25f, 0.75f, 0.0f, 1.0f,
+		1.0f,  1.0f,  1.0f, 1.0f,
+
+		1.0f,  1.0f,  1.0f, 1.0f,  //4
+		0.25f, 0.75f, 0.0f,    1.0f,
+		0.0f,  1.0f,  0.0f,    1.0f,
+
+		1.0f,  1.0f,  1.0f, 1.0f,  //5
+		0.0f,  1.0f,  0.0f,    1.0f,
+		0.0f,  0.75f, 0.25f,    1.0f,
+
+		1.0f,  1.0f,  1.0f, 1.0f,  //6
+		0.0f,  0.75f, 0.25f,    1.0f,
+		0.0f,  0.5f,  0.5f,    1.0f,
+
+		1.0f,  1.0f,  1.0f, 1.0f,  //7
+		0.0f,  0.5f,  0.5f,  1.0f,
+		0.0f,  0.25f, 0.75f, 1.0f,
+
+		1.0f,  1.0f,  1.0f, 1.0f,  //8
+		0.0f,  0.25f, 0.75f, 1.0f,
+		0.0f,  0.0f,  1.0f,  1.0f,
+
+		1.0f,  1.0f,  1.0f, 1.0f,  //9
+		0.0f,  0.0f,  1.0f, 1.0f,
+		0.25f, 0.0f,  0.75f,  1.0f,
+
+		0.5f,  0.0f,  0.5f, 1.0f,  //10
+		1.0f,  1.0f,  1.0f, 1.0f, 
+		0.25f, 0.0f,  0.75f,   1.0f,
+
+		0.75f, 0.0f, 0.25f, 1.0f,  //11
+		1.0f,  1.0f,  1.0f, 1.0f, 
+		0.5f,  0.0f,  0.5f,  1.0f,
+
+		1.0f,  0.0f,  0.0f, 1.0f,   //12
+		1.0f,  1.0f,  1.0f, 1.0f,
+		0.75f, 0.0f,  0.25f,    1.0f
+	};
 	
 	glGenBuffers(1, &vTriangleId);
 	glBindBuffer(GL_ARRAY_BUFFER, vTriangleId);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glGenBuffers(1, &ColorBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, ColorBufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Colors), Colors, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(1);
 
 	GLenum ErrorCheckValue = glGetError();
 	if (ErrorCheckValue != GL_NO_ERROR)
@@ -232,6 +288,7 @@ void Renderer::destroyVertexBuffers(void)
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glDeleteBuffers(1, &ColorBufferId);
 	glDeleteBuffers(1, &vTriangleId);
 	glBindVertexArray(0);
 	glDeleteVertexArrays(1, &vaoId);
