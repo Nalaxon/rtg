@@ -11,8 +11,8 @@ int main(int argc, char* argv[])
 {
     const char* VERTEX_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task2\\vertexshader.glsl";
 	const char* FRAGMENT_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task2\\fragmentshader.glsl";
-	//const char* VERTEX_SHADER_SOURCE = "./source/task1/vertexshader.glsl";
-	//const char* FRAGMENT_SHADER_SOURCE = "./source/task1/fragmentshader.glsl";
+	//const char* VERTEX_SHADER_SOURCE = "./source/task2/vertexshader.glsl";
+	//const char* FRAGMENT_SHADER_SOURCE = "./source/task2/fragmentshader.glsl";
 	try
 	{
 		GL::platform::Window window("Assignment 2 — More complex shapes", 800, 600, 0, 0, false, 3, 3);
@@ -20,10 +20,8 @@ int main(int argc, char* argv[])
 		Renderer renderer(window);
 		renderer.resize(800, 600);
 
-		std::cout << "OpenGl Version: " << glGetString(GL_VERSION) << std::endl;
-
 		renderer.createShader(VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
-		renderer.createVertexBuffers();
+		renderer.createNaivePolygon();
 
 		InputHandler input_handler;
 
@@ -32,7 +30,7 @@ int main(int argc, char* argv[])
 		
 		GL::platform::run(renderer);
 
-		//renderer.destroyVertexBuffers();
+		renderer.destroyNaivePolygon();
 		renderer.destroyShader();
 
 	}
