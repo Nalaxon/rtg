@@ -8,6 +8,7 @@
 
 #include <GL/platform/Renderer.h>
 #include <GL/platform/Window.h>
+#include <string>
 
 
 class Renderer : public virtual GL::platform::Renderer, public virtual GL::platform::DisplayHandler
@@ -24,6 +25,8 @@ private:
 	GLuint vaoId;
 	GLuint vTriangleId;
 	GLuint ColorBufferId;
+	void  CheckError(const std::string funcName);
+	
 
 public:
 	Renderer(const Renderer&) = delete;
@@ -35,8 +38,8 @@ public:
 	void render();
 	void createShader(const char* vertexShaderPath, const char* fragmentShaderPath);
 	void destroyShader(void);
-	void createVertexBuffers(void);
-	void destroyVertexBuffers(void);
+	void createNaivePolygon(void);
+	void destroyNaivePolygon(void);
 };
 
 #endif  // INCLUDED_RENDERER

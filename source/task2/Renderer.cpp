@@ -4,7 +4,6 @@
 #include "Renderer.h"
 #include <fstream>
 #include <iostream>
-#include <string>
 #include <vector>
 #include <algorithm>
 #include <GL\gl.h>
@@ -78,6 +77,7 @@ int unloadshader(GLubyte** ShaderSource)
 void Renderer::createShader(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
 	GLint result = GL_FALSE;
+	//GLenum ErrorCheckValue;
 	int infoLogLength;
 	std::string vertexShaderSource, fragmentShaderSource;
 
@@ -85,7 +85,9 @@ void Renderer::createShader(const char* vertexShaderPath, const char* fragmentSh
 	loadshader(fragmentShaderPath, fragmentShaderSource);
 	
 	vertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
+	CheckError("CreateShader(VERTEX)");
 	fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
+	CheckError("CreateShader(FRAGMENT)");
 
 	const char* const_vss = vertexShaderSource.c_str();
 	const char* const_vfs = fragmentShaderSource.c_str();
@@ -96,76 +98,113 @@ void Renderer::createShader(const char* vertexShaderPath, const char* fragmentSh
 
 	// Check Vertex Shader
 	glGetShaderiv(vertexShaderObject, GL_COMPILE_STATUS, &result);
-	glGetShaderiv(vertexShaderObject, GL_INFO_LOG_LENGTH, &infoLogLength);
-	std::vector<char> VertexShaderErrorMessage(infoLogLength);
-	glGetShaderInfoLog(vertexShaderObject, infoLogLength, NULL, &VertexShaderErrorMessage[0]);
+	if (result != GL_TRUE)
+	{
+		glGetShaderiv(vertexShaderObject, GL_INFO_LOG_LENGTH, &infoLogLength);
+		std::vector<char> VertexShaderErrorMessage(infoLogLength);
+		glGetShaderInfoLog(vertexShaderObject, infoLogLength, NULL, &VertexShaderErrorMessage[0]);
+		fprintf(
+			stderr,
+			"ERROR: Could not create the shaders: %s \n", VertexShaderErrorMessage
+			);
+		exit(-1);
+	}
+		
 
 	glShaderSource(fragmentShaderObject, 1, &const_vfs, NULL);
 	glCompileShader(fragmentShaderObject);
 
 	// Check Fragment Shader
 	glGetShaderiv(fragmentShaderObject, GL_COMPILE_STATUS, &result);
-	glGetShaderiv(fragmentShaderObject, GL_INFO_LOG_LENGTH, &infoLogLength);
-	std::vector<char> FragmentShaderErrorMessage(infoLogLength);
-	glGetShaderInfoLog(fragmentShaderObject, infoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+	if (result != GL_TRUE)
+	{
+		glGetShaderiv(fragmentShaderObject, GL_INFO_LOG_LENGTH, &infoLogLength);
+		std::vector<char> FragmentShaderErrorMessage(infoLogLength);
+		glGetShaderInfoLog(fragmentShaderObject, infoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+		fprintf(
+			stderr,
+			"ERROR: Could not create the shaders: %s \n", FragmentShaderErrorMessage
+			);
+		exit(-1);
+	}
 
 	programmID = glCreateProgram();
+	CheckError("CreateProgramm()");
 
 	glAttachShader(programmID, vertexShaderObject);
+	CheckError("AttachShader(vertex)");
 	glAttachShader(programmID, fragmentShaderObject);
+	CheckError("AttachShader(fragment)");
 
 	glLinkProgram(programmID);
 
 	// Check the program
 	glGetProgramiv(programmID, GL_LINK_STATUS, &result);
-	glGetProgramiv(programmID, GL_INFO_LOG_LENGTH, &infoLogLength);
-	std::vector<char> ProgramErrorMessage(std::max(infoLogLength, int(1)));
-	glGetProgramInfoLog(programmID, infoLogLength, NULL, &ProgramErrorMessage[0]);
+	if (result != GL_TRUE)
+	{
+		glGetProgramiv(programmID, GL_INFO_LOG_LENGTH, &infoLogLength);
+		std::vector<char> ProgramErrorMessage(std::max(infoLogLength, int(1)));
+		glGetProgramInfoLog(programmID, infoLogLength, NULL, &ProgramErrorMessage[0]);
+		fprintf(
+			stderr,
+			"ERROR: Could not link programm: %s \n", ProgramErrorMessage
+			);
+		exit(-1);
+	}
+	
 
 	//glDeleteShader(vertexShaderObject);
 	//glDeleteShader(fragmentShaderObject);
 
 	glUseProgram(programmID);
+	CheckError("UseProgramm()");
 
-	GLenum ErrorCheckValue = glGetError();
+	/*ErrorCheckValue = glGetError();
 	if (ErrorCheckValue != GL_NO_ERROR)
 	{
 		fprintf(
 			stderr,
 			"ERROR: Could not create the shaders: \n"
-			//gluErrorString(ErrorCheckValue)
 			);
 		exit(-1);
-	}
+	}*/
 }
 
 void Renderer::destroyShader(void)
 {
-	GLenum ErrorCheckValue = glGetError();
+	//GLenum ErrorCheckValue = glGetError();
 	glUseProgram(0);
+	CheckError("UserProgram(0)");
 	glDetachShader(programmID, vertexShaderObject);
+	CheckError("DetachShader(, vertexShader)");
 	glDetachShader(programmID, fragmentShaderObject);
+	CheckError("DetachShader(, framentShader)");
 	glDeleteShader(fragmentShaderObject);
+	CheckError("DeleteShader(fragmentShader)");
 	glDeleteShader(vertexShaderObject);
+	CheckError("DeleteShader(vertexShader)");
 	glDeleteProgram(programmID);
-	ErrorCheckValue = glGetError();
-	if (ErrorCheckValue != GL_NO_ERROR)
-	{
-		fprintf(
-			stderr,
-			"ERROR: Could not destroy the shaders: \n"
-			//gluErrorString(ErrorCheckValue)
-			);
-		exit(-1);
-	}
+	CheckError("DelteProgramm()");
+	//ErrorCheckValue = glGetError();
+	//if (ErrorCheckValue != GL_NO_ERROR)
+	//{
+	//	fprintf(
+	//		stderr,
+	//		"ERROR: Could not destroy the shaders: \n"
+	//		//gluErrorString(ErrorCheckValue)
+	//		);
+	//	exit(-1);
+	//}
 
 }
 
-void Renderer::createVertexBuffers(void)
+void Renderer::createNaivePolygon(void)
 {
 	//VAO
 	glGenVertexArrays(1, &vaoId);
+	CheckError("GenVertexArrays(1, vaoId");
 	glBindVertexArray(vaoId);
+	CheckError("BindVertexArray(vaoId)");
 
 	//dodecagon
 	//x_i = r * cos(w_i)   y_i = r * sin(w_i)
@@ -259,46 +298,75 @@ void Renderer::createVertexBuffers(void)
 	};
 	
 	glGenBuffers(1, &vTriangleId);
+	CheckError("GenBuffers(1, Triangle)");
 	glBindBuffer(GL_ARRAY_BUFFER, vTriangleId);
+	CheckError("BindBuffer(Triangle)");
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
+	CheckError("Bufferdata()");
 	glEnableVertexAttribArray(0);
+	CheckError("EnableVertexAttriArray(0)");
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	CheckError("VertexAttribPointer(0, 3,...)");
 
 	glGenBuffers(1, &ColorBufferId);
+	CheckError("GenBuffers(1, ColorBuffer)");
 	glBindBuffer(GL_ARRAY_BUFFER, ColorBufferId);
+	CheckError("BindBuffer, ColorBuffer)");
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Colors), Colors, GL_STATIC_DRAW);
+	CheckError("BufferData(Colors)");
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	CheckError("VertexAttribPointer, 1, 4, ...)");
 	glEnableVertexAttribArray(1);
+	CheckError("EnableVertexAttribArray(1)");
 
-	GLenum ErrorCheckValue = glGetError();
-	if (ErrorCheckValue != GL_NO_ERROR)
-	{
-		fprintf(
-			stderr,
-			"ERROR: Could not create a VBO: \n"
-			//glGetInfoErr(ErrorCheckValue)
-			);
-		exit(-1);
-	}
+	//GLenum ErrorCheckValue = glGetError();
+	//if (ErrorCheckValue != GL_NO_ERROR)
+	//{
+	//	fprintf(
+	//		stderr,
+	//		"ERROR: Could not create a VBO: \n"
+	//		//glGetInfoErr(ErrorCheckValue)
+	//		);
+	//	exit(-1);
+	//}
 }
 
-void Renderer::destroyVertexBuffers(void)
+void Renderer::destroyNaivePolygon(void)
 {
 	GLenum ErrorCheckValue = glGetError();
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	CheckError("BindBuffer()");
 	glDeleteBuffers(1, &ColorBufferId);
+	CheckError("DeleteBuffers(1, ColorBuffer)");
 	glDeleteBuffers(1, &vTriangleId);
+	CheckError("DelteBuffers(1,Triangle)");
 	glBindVertexArray(0);
+	CheckError("BindVertexArray(0)");
 	glDeleteVertexArrays(1, &vaoId);
-	ErrorCheckValue = glGetError();
+	CheckError("DeleteVertexArrays()");
+	//ErrorCheckValue = glGetError();
+	//if (ErrorCheckValue != GL_NO_ERROR)
+	//{
+	//	fprintf(
+	//		stderr,
+	//		"ERROR: Could not destroy the VBO:  \n"
+	//		//gluErrorString(ErrorCheckValue)
+	//		);
+	//	exit(-1);
+	//}
+
+}
+
+void  Renderer::CheckError(const std::string funcName)
+{
+	GLenum ErrorCheckValue = glGetError();
 	if (ErrorCheckValue != GL_NO_ERROR)
 	{
 		fprintf(
 			stderr,
-			"ERROR: Could not destroy the VBO:  \n"
-			//gluErrorString(ErrorCheckValue)
+			"ERROR: While function %s \n", funcName
 			);
 		exit(-1);
 	}
