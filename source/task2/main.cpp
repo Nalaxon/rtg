@@ -15,8 +15,8 @@ int main(int argc, char* argv[])
 	//const char* FRAGMENT_SHADER_SOURCE = "./source/task2/fragmentshader.glsl";
 	try
 	{
-		GL::platform::Window window("Assignment 2 — More complex shapes", 800, 600, 0, 0, false, 3, 3);
-
+		GL::platform::Window window("Assignment 2 More complex shapes", 800, 600, 0, 0, false, 3, 3);
+		
 		Renderer renderer(window);
 		renderer.resize(800, 600);
 
