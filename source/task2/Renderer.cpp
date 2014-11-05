@@ -92,6 +92,8 @@ void Renderer::createShader(const char* vertexShaderPath, const char* fragmentSh
 	const char* const_vss = vertexShaderSource.c_str();
 	const char* const_vfs = fragmentShaderSource.c_str();
 
+	std::cout << "Compile Vertex Shader..." << std::endl;
+
 	glShaderSource(vertexShaderObject, 1, &const_vss, NULL);
 	glCompileShader(vertexShaderObject);
 	
@@ -105,11 +107,13 @@ void Renderer::createShader(const char* vertexShaderPath, const char* fragmentSh
 		glGetShaderInfoLog(vertexShaderObject, infoLogLength, NULL, &VertexShaderErrorMessage[0]);
 		fprintf(
 			stderr,
-			"ERROR: Could not create the shaders: %s \n", VertexShaderErrorMessage
+			"ERROR: Could not create the shaders: %s \n", &VertexShaderErrorMessage[0]
 			);
+		getchar();
 		exit(-1);
 	}
 		
+	std::cout << "Compile Fragment Shader..." << std::endl;
 
 	glShaderSource(fragmentShaderObject, 1, &const_vfs, NULL);
 	glCompileShader(fragmentShaderObject);
@@ -123,10 +127,13 @@ void Renderer::createShader(const char* vertexShaderPath, const char* fragmentSh
 		glGetShaderInfoLog(fragmentShaderObject, infoLogLength, NULL, &FragmentShaderErrorMessage[0]);
 		fprintf(
 			stderr,
-			"ERROR: Could not create the shaders: %s \n", FragmentShaderErrorMessage
+			"ERROR: Could not create the shaders: %s \n", &FragmentShaderErrorMessage[0]
 			);
+		getchar();
 		exit(-1);
 	}
+
+	std::cout << "Create Program..." << std::endl;
 
 	programmID = glCreateProgram();
 	CheckError("CreateProgramm()");
@@ -149,6 +156,7 @@ void Renderer::createShader(const char* vertexShaderPath, const char* fragmentSh
 			stderr,
 			"ERROR: Could not link programm: %s \n", ProgramErrorMessage
 			);
+		getchar();
 		exit(-1);
 	}
 	
@@ -245,7 +253,7 @@ void Renderer::createNaivePolygon(void)
 		0.6f, 0.0f, 0.0f, //twelfth
 		0.0f, 0.0f, 0.0f,
 		0.52f, -0.3f, 0.0f,
-	};
+	};   
 	//interpolated colors
 	GLfloat Colors[] = {	
 		1.0f,  0.0f,  0.0f, 1.0f,
@@ -368,6 +376,7 @@ void  Renderer::CheckError(const std::string funcName)
 			stderr,
 			"ERROR: While function %s \n", funcName
 			);
+		getchar();
 		exit(-1);
 	}
 }
