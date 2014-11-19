@@ -134,22 +134,43 @@ void Renderer::createShader(const char* vertexShaderPath, const char* fragmentSh
 		exit(-1);
 	}
 
-
-	//glDeleteShader(vertexShaderObject);
-	//glDeleteShader(fragmentShaderObject);
-
 	glUseProgram(programmID);
 	CheckError("UseProgramm()");
 
-	/*ErrorCheckValue = glGetError();
-	if (ErrorCheckValue != GL_NO_ERROR)
-	{
-	fprintf(
-	stderr,
-	"ERROR: Could not create the shaders: \n"
-	);
-	exit(-1);
-	}*/
+}
+
+void Renderer::destroyShader(void)
+{
+	glUseProgram(0);
+	CheckError("UserProgram(0)");
+	glDetachShader(programmID, vertexShaderObject);
+	CheckError("DetachShader(, vertexShader)");
+	glDetachShader(programmID, fragmentShaderObject);
+	CheckError("DetachShader(, framentShader)");
+	glDeleteShader(fragmentShaderObject);
+	CheckError("DeleteShader(fragmentShader)");
+	glDeleteShader(vertexShaderObject);
+	CheckError("DeleteShader(vertexShader)");
+	glDeleteProgram(programmID);
+	CheckError("DelteProgramm()");
+}
+
+void Renderer::createNaiveStructure(void)
+{
+	//VAO
+	glGenVertexArrays(1, &vaoId);
+	CheckError("GenVertexArrays(1, vaoId");
+	glBindVertexArray(vaoId);
+	CheckError("BindVertexArray(vaoId)");
+
+	//dodecahedron
+	GLfloat structure[1];
+
+}
+
+void Renderer::destroyNaiveStructure(void)
+{
+
 }
 
 void Renderer::render()
@@ -157,6 +178,20 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glViewport(0, 0, viewport_width, viewport_height);
-
+	
 	context.swapBuffers();
+}
+
+void  Renderer::CheckError(const std::string funcName)
+{
+	GLenum ErrorCheckValue = glGetError();
+	if (ErrorCheckValue != GL_NO_ERROR)
+	{
+		fprintf(
+			stderr,
+			"ERROR: While function %s \n", funcName
+			);
+		getchar();
+		exit(-1);
+	}
 }

@@ -36,6 +36,9 @@ public:
 	void resize(int width, int height);
 	void render();
 	void createShader(const char* vertexShaderPath, const char* fragmentShaderPath);
+	void destroyShader(void);
+	void createNaiveStructure(void);
+	void destroyNaiveStructure(void);
 };
 
 #endif  // INCLUDED_RENDERER

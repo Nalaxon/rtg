@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 		renderer.resize(800, 600);
 
 		renderer.createShader(VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
-		renderer.createNaivePolygon();
+		renderer.createNaiveStructure();
 
 		InputHandler input_handler;
 
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 
 		GL::platform::run(renderer);
 		
-		renderer.destroyNaivePolygon();
+		renderer.destroyNaiveStructure();
 		renderer.destroyShader();
 
 	}
