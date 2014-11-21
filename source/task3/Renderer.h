@@ -8,6 +8,9 @@
 
 #include <GL/platform/Renderer.h>
 #include <GL/platform/Window.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <string>
 
 
@@ -23,8 +26,10 @@ private:
 	GLuint vertexShaderObject;
 	GLuint fragmentShaderObject;
 	GLuint vaoId;
-	GLuint vTriangleId;
+	GLuint vStructureId;
+	GLuint vBufferId;
 	GLuint ColorBufferId;
+	glm::mat4 ModelViewProjectionMatrix;
 	void  CheckError(const std::string funcName);
 
 public:

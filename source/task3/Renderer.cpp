@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-
+#include <cmath>
 
 Renderer::Renderer(GL::platform::Window& window)
 	: context(window)
@@ -128,7 +128,7 @@ void Renderer::createShader(const char* vertexShaderPath, const char* fragmentSh
 		glGetProgramInfoLog(programmID, infoLogLength, NULL, &ProgramErrorMessage[0]);
 		fprintf(
 			stderr,
-			"ERROR: Could not link programm: %s \n", ProgramErrorMessage
+			"ERROR: Could not link programm: %s \n", &ProgramErrorMessage[0]
 			);
 		getchar();
 		exit(-1);
@@ -163,9 +163,75 @@ void Renderer::createNaiveStructure(void)
 	glBindVertexArray(vaoId);
 	CheckError("BindVertexArray(vaoId)");
 
+	float a = (1 + std::sqrt(5)) / 2;
 	//dodecahedron
-	GLfloat structure[1];
+	GLfloat structure[] = {
+		-.5f, -.5f, .5f,
+		-.5f, .5f, .5f,
+		.5f, .5f, .5f,
+		.5f, -.5f, .5f,
+		-.5f, -.5f, -.5f,
+		-.5f, .5f, -.5f,
+		.5f, .5f, -.5f,
+		.5f, -.5f, -.5f,
+		
+		//basic quader
+		-1.0f, 1.0f, 0.0f,  //-1.0f,     //foreground
+		-1.0f, -1.0f, 0.0f, //-1.0f
+		 1.0f, 1.0f, 0.0f,  //-1.0f,
+		 1.0f, -1.0f, 0.0f, //-1.0f,
+		-1.0f, 1.0f, 0.0f,  //1.0f,     //background
+		-1.0f, -1.0f, 0.0f, //1.0f
+		 1.0f, 1.0f, 0.0f,  //1.0f,
+		 1.0f, -1.0f, 0.0f, //1.0f,
 
+		 //edge fore and background
+		 0.0f, 1/a, 0.0f, //-a
+		 0.0f, -1/a, 0.0f, //-a
+		 0.0f, 1/a, 0.0f, //a
+		 0.0f, -1/a, 0.0f, //a
+
+		 //edges top buttom
+		 -1/a, a, 0.0f,
+		 1/a, a, 0.0f,
+		 -1/a, -a, 0.0f,
+		 1/a, -a, 0.0f,
+
+		 //edges left right
+		 -a, 0.0f, 0.0f,  //-1/a,
+		 -a, 0.0f, 0.0f,  //1/a,
+		 a, 0.0f, 0.0f, //-1/a,
+		 a, 0.0f, 0.0f, //1/a
+		 
+	};
+	
+	const GLuint indices[] = {
+		0,2,1,  0,3,2,
+		4,3,0,  4,7,3,
+		4,1,5,  4,0,1,
+		3,6,2,  3,7,6,
+		1,6,5,  1,2,6,
+		7,5,6,  7,4,5
+	};
+
+	glGenBuffers(2, &vStructureId);
+	CheckError("GenBuffers(2, StructureId)");
+	glBindBuffer(GL_ARRAY_BUFFER, vStructureId);
+	CheckError("BindBuffer(Structre)");
+	glBufferData(GL_ARRAY_BUFFER, sizeof(structure), structure, GL_STATIC_DRAW);
+	CheckError("Bufferdata()");
+	glEnableVertexAttribArray(0);
+	CheckError("EnableVertexAttriArray(0)");
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	CheckError("VertexAttribPointer(0, 3,...)");
+
+	
+	//glGenBuffers(3, &vBufferId);
+	//CheckError("GenBuffers(3, BufferId)");
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vBufferId);
+	CheckError("BindBuffer(Indices)");
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	CheckError("BufferData(indices)");
 }
 
 void Renderer::destroyNaiveStructure(void)
@@ -178,6 +244,12 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glViewport(0, 0, viewport_width, viewport_height);
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
+	
+	//glTranslated(-3.0, 1.5, -6);
+	//glScaled(0.5, 0.5, 0.5);
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	
 	context.swapBuffers();
 }
@@ -187,10 +259,7 @@ void  Renderer::CheckError(const std::string funcName)
 	GLenum ErrorCheckValue = glGetError();
 	if (ErrorCheckValue != GL_NO_ERROR)
 	{
-		fprintf(
-			stderr,
-			"ERROR: While function %s \n", funcName
-			);
+		std::cerr << "ERROR: While function " << funcName << std::endl;
 		getchar();
 		exit(-1);
 	}

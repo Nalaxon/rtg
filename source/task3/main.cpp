@@ -9,18 +9,26 @@
 #include "Renderer.h"
 #include "InputHandler.h"
 
+void APIENTRY OpenGLDebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+	std::cout << message << '\n';
+}
 
 int main(int argc, char* argv[])
 {
-	//const char* VERTEX_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task2\\vertexshader.glsl";
-	//const char* FRAGMENT_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task2\\fragmentshader.glsl";
-	const char* VERTEX_SHADER_SOURCE = "./source/task2/vertexshader.glsl";
-	const char* FRAGMENT_SHADER_SOURCE = "./source/task2/fragmentshader.glsl";
+	const char* VERTEX_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task3\\vertexshader.glsl";
+	const char* FRAGMENT_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task3\\fragmentshader.glsl";
+	//const char* VERTEX_SHADER_SOURCE = "./source/task3/vertexshader.glsl";
+	//const char* FRAGMENT_SHADER_SOURCE = "./source/task3/fragmentshader.glsl";
 	try
 	{
-		GL::platform::Window window("Assignment 2 More complex shapes", 800, 600, 0, 0, false, 3, 3);
+		GL::platform::Window window("Assignment 3 More complex shapes", 800, 600, 0, 0, false, 4, 3);
 
 		Renderer renderer(window);
+
+		glDebugMessageCallback(OpenGLDebugOutputCallback, nullptr);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
 		renderer.resize(800, 600);
 
 		renderer.createShader(VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
