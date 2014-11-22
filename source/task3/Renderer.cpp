@@ -257,12 +257,20 @@ void Renderer::createNaiveStructure(void)
 		camera.v_up
 		);
 
+	ModelMatrix = {1, 0, 0, 0,
+	               0, 1, 0, 0,
+	               0, 0, 1, 0,
+	               0, 0, 0, 1};
+
 	//upload matrix to shader
 	GLint uniTrans = glGetUniformLocation(programmID, "proj");
 	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
 
 	GLint uniView = glGetUniformLocation(programmID, "view");
 	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
+
+	GLint uniModel = glGetUniformLocation(programmID, "model");
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
 }
 
 void Renderer::destroyNaiveStructure(void)
