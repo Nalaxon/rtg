@@ -13,6 +13,20 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 
+typedef struct {
+	glm::vec3 v_up;
+	glm::vec3 p_camera;
+	glm::vec3 p_lookat;
+} Camera;
+
+typedef struct {
+	float beta;
+	float z_n;
+	float z_f;
+	float h;
+	float w;
+	float aspect;
+} View;
 
 class Renderer : public virtual GL::platform::Renderer, public virtual GL::platform::DisplayHandler
 {
@@ -30,6 +44,8 @@ private:
 	GLuint vBufferId;
 	GLuint ColorBufferId;
 	glm::mat4 ModelViewProjectionMatrix;
+	Camera camera;
+	View view;
 	void  CheckError(const std::string funcName);
 
 public:

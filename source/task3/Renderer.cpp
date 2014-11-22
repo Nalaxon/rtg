@@ -163,33 +163,33 @@ void Renderer::createNaiveStructure(void)
 	glBindVertexArray(vaoId);
 	CheckError("BindVertexArray(vaoId)");
 
-	float a = (1 + std::sqrt(5)) / 2;
+	float a = (1 + std::sqrt(5.0f)) / 2;
 	//dodecahedron
 	GLfloat structure[] = {
-		-.5f, -.5f, .5f,
-		-.5f, .5f, .5f,
-		.5f, .5f, .5f,
-		.5f, -.5f, .5f,
-		-.5f, -.5f, -.5f,
-		-.5f, .5f, -.5f,
-		.5f, .5f, -.5f,
-		.5f, -.5f, -.5f,
-		
+		/*-.1f, -.1f, .1f,
+		-.1f, .1f, .1f,
+		.1f, .1f, .1f,
+		.1f, -.1f, .1f,
+		-.1f, -.1f, -.1f,
+		-.1f, .1f, -.1f,
+		.1f, .1f, -.1f,
+		.1f, -.1f, -.1f,
+		*/
 		//basic quader
-		-1.0f, 1.0f, 0.0f,  //-1.0f,     //foreground
-		-1.0f, -1.0f, 0.0f, //-1.0f
-		 1.0f, 1.0f, 0.0f,  //-1.0f,
-		 1.0f, -1.0f, 0.0f, //-1.0f,
-		-1.0f, 1.0f, 0.0f,  //1.0f,     //background
-		-1.0f, -1.0f, 0.0f, //1.0f
-		 1.0f, 1.0f, 0.0f,  //1.0f,
-		 1.0f, -1.0f, 0.0f, //1.0f,
+		-1.0f, 1.0f, 1.0f,     //foreground
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, 1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, 1.0f, 1.0f,     //background
+		-1.0f, -1.0f, 1.0f,
+		 1.0f, 1.0f, 1.0f,
+		 1.0f, -1.0f, 1.0f,
 
 		 //edge fore and background
-		 0.0f, 1/a, 0.0f, //-a
-		 0.0f, -1/a, 0.0f, //-a
-		 0.0f, 1/a, 0.0f, //a
-		 0.0f, -1/a, 0.0f, //a
+		 0.0f, 1/a, -a,
+		 0.0f, -1/a, -a,
+		 0.0f, 1/a, a,
+		 0.0f, -1/a, a,
 
 		 //edges top buttom
 		 -1/a, a, 0.0f,
@@ -198,10 +198,10 @@ void Renderer::createNaiveStructure(void)
 		 1/a, -a, 0.0f,
 
 		 //edges left right
-		 -a, 0.0f, 0.0f,  //-1/a,
-		 -a, 0.0f, 0.0f,  //1/a,
-		 a, 0.0f, 0.0f, //-1/a,
-		 a, 0.0f, 0.0f, //1/a
+		 -a, 0.0f, -1/a,
+		 -a, 0.0f, 1/a,
+		 a, 0.0f, -1/a,
+		 a, 0.0f, 1/a
 		 
 	};
 	
@@ -232,6 +232,28 @@ void Renderer::createNaiveStructure(void)
 	CheckError("BindBuffer(Indices)");
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	CheckError("BufferData(indices)");
+
+	//initial camera position and orientation
+	camera.p_camera = glm::vec3(0.0f, 0.0f, 0.0f);
+	camera.p_lookat = glm::vec3(1.0f, 0.0f, 0.0f);
+	camera.v_up = glm::vec3(0.0f, 1.0f, 1.0f);
+
+	//init view pyramid
+	view.beta = 60;
+	view.z_n = 0.1f;
+	view.z_f = 400;
+	view.aspect = static_cast<float>(viewport_width / viewport_height);
+	view.h = -2 * view.z_n * tan(view.beta / 2);
+
+	//Calculate of matrices
+	ModelViewProjectionMatrix = {1/ (view.aspect * view.h), 0, 0, 0,
+	                             0, 1/view.h, 0, 0,
+	                             0, 0, - (view.z_f + view.z_n) / (view.z_f - view.z_n), -1,
+	                             0, 0, - (2 * view.z_f * view.z_n) / (view.z_f - view.z_n), 0};
+
+	//upload matrix to shader
+	GLint uniTrans = glGetUniformLocation(programmID, "trans");
+	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
 }
 
 void Renderer::destroyNaiveStructure(void)
