@@ -166,7 +166,7 @@ void Renderer::createNaiveStructure(void)
 	float a = (1 + std::sqrt(5.0f)) / 2;
 	//dodecahedron
 	GLfloat structure[] = {
-		/*-.1f, -.1f, .1f,
+		-.1f, -.1f, .1f,
 		-.1f, .1f, .1f,
 		.1f, .1f, .1f,
 		.1f, -.1f, .1f,
@@ -174,7 +174,7 @@ void Renderer::createNaiveStructure(void)
 		-.1f, .1f, -.1f,
 		.1f, .1f, -.1f,
 		.1f, -.1f, -.1f,
-		*/
+	
 		//basic quader
 		-1.0f, 1.0f, 1.0f,     //foreground
 		-1.0f, -1.0f, -1.0f,
@@ -234,8 +234,8 @@ void Renderer::createNaiveStructure(void)
 	CheckError("BufferData(indices)");
 
 	//initial camera position and orientation
-	camera.p_camera = glm::vec3(0.0f, 0.0f, 0.0f);
-	camera.p_lookat = glm::vec3(1.0f, 0.0f, 0.0f);
+	camera.p_camera = glm::vec3(0.0f, 0.0f, -0.2f);
+	camera.p_lookat = glm::vec3(0.0f, 0.0f, 0.0f);
 	camera.v_up = glm::vec3(0.0f, 1.0f, 1.0f);
 
 	//init view pyramid
@@ -246,14 +246,23 @@ void Renderer::createNaiveStructure(void)
 	view.h = -2 * view.z_n * tan(view.beta / 2);
 
 	//Calculate of matrices
-	ModelViewProjectionMatrix = {1/ (view.aspect * view.h), 0, 0, 0,
+	ProjectionMatrix = {1/ (view.aspect * view.h), 0, 0, 0,
 	                             0, 1/view.h, 0, 0,
 	                             0, 0, - (view.z_f + view.z_n) / (view.z_f - view.z_n), -1,
 	                             0, 0, - (2 * view.z_f * view.z_n) / (view.z_f - view.z_n), 0};
 
+	ViewMatrix =  glm::lookAt(
+		camera.p_camera,
+		camera.p_lookat,
+		camera.v_up
+		);
+
 	//upload matrix to shader
-	GLint uniTrans = glGetUniformLocation(programmID, "trans");
-	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(ModelViewProjectionMatrix));
+	GLint uniTrans = glGetUniformLocation(programmID, "proj");
+	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+
+	GLint uniView = glGetUniformLocation(programmID, "view");
+	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
 }
 
 void Renderer::destroyNaiveStructure(void)

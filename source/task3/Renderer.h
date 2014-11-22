@@ -43,7 +43,9 @@ private:
 	GLuint vStructureId;
 	GLuint vBufferId;
 	GLuint ColorBufferId;
-	glm::mat4 ModelViewProjectionMatrix;
+	glm::mat4 ModelMatrix;
+	glm::mat4 ViewMatrix;
+	glm::mat4 ProjectionMatrix;
 	Camera camera;
 	View view;
 	void  CheckError(const std::string funcName);
