@@ -12,6 +12,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
+#include <time.h>
 
 typedef struct {
 	glm::vec3 v_up;
@@ -43,11 +44,16 @@ private:
 	GLuint vStructureId;
 	GLuint vBufferId;
 	GLuint ColorBufferId;
+	GLuint normalId;
+	GLuint indexId;
 	glm::mat4 ModelMatrix;
+	GLint uniModel;
 	glm::mat4 ViewMatrix;
 	glm::mat4 ProjectionMatrix;
 	Camera camera;
 	View view;
+	clock_t LastTime;
+	float RotateAngle;
 	void  CheckError(const std::string funcName);
 
 public:

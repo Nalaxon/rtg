@@ -165,91 +165,163 @@ void Renderer::createNaiveStructure(void)
 
 	float a = (1 + std::sqrt(5.0f)) / 2;
 	//dodecahedron
-	GLfloat structure[] = {
-		-.1f, -.1f, .1f,
-		-.1f, .1f, .1f,
-		.1f, .1f, .1f,
-		.1f, -.1f, .1f,
-		-.1f, -.1f, -.1f,
-		-.1f, .1f, -.1f,
-		.1f, .1f, -.1f,
-		.1f, -.1f, -.1f,
 	
+	GLfloat structure[] = {
+		//Back
+		-1.0f, -1.0f, 1.0f,  //0
+		-1.0f, 1.0f, 1.0f,   //1
+		1.0f, 1.0f, 1.0f,    //2
+		1.0f, -1.0f, 1.0f,   //3
+
+        //Buttom
+		1.0f, -1.0f, 1.0f,   //4
+		-1.0f, -1.0f, 1.0f,  //5
+		-1.0f, -1.0f, -1.0f, //6
+		1.0f, -1.0f, -1.0f,  //7
+		
+		//Left
+		-1.0f, -1.0f, -1.0f, //8
+		-1.0f, 1.0f, 1.0f,   //9
+		-1.0f, 1.0f, -1.0f,  //10
+		-1.0f, -1.0f, 1.0f,  //11
+
+		//Right
+		1.0f, -1.0f, 1.0f,   //12
+		1.0f, 1.0f, -1.0f,   //13
+		1.0f, 1.0f, 1.0f,    //14
+		1.0f, -1.0f, -1.0f,  //15
+
+		//Top
+		-1.0f, 1.0f, 1.0f,   //16
+		-1.0f, 1.0f, -1.0f,  //17
+		1.0f, 1.0f, -1.0f,   //18
+		1.0f, 1.0f, 1.0f,    //19
+
+		//Front
+		-1.0f, 1.0f, -1.0f,  //20
+		1.0f, 1.0f, -1.0f,   //21
+		-1.0f, -1.0f, -1.0f,  //22
+		1.0f, -1.0f, -1.0f,  //23
+
 		//basic quader
-		-1.0f, 1.0f, 1.0f,     //foreground
+	/*	-1.0f, 1.0f, 1.0f,     //foreground
 		-1.0f, -1.0f, -1.0f,
-		 1.0f, 1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
+		1.0f, 1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
 		-1.0f, 1.0f, 1.0f,     //background
 		-1.0f, -1.0f, 1.0f,
-		 1.0f, 1.0f, 1.0f,
-		 1.0f, -1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,
 
-		 //edge fore and background
-		 0.0f, 1/a, -a,
-		 0.0f, -1/a, -a,
-		 0.0f, 1/a, a,
-		 0.0f, -1/a, a,
+		//edge fore and background
+		0.0f, 1 / a, -a,
+		0.0f, -1 / a, -a,
+		0.0f, 1 / a, a,
+		0.0f, -1 / a, a,
 
-		 //edges top buttom
-		 -1/a, a, 0.0f,
-		 1/a, a, 0.0f,
-		 -1/a, -a, 0.0f,
-		 1/a, -a, 0.0f,
+		//edges top buttom
+		-1 / a, a, 0.0f,
+		1 / a, a, 0.0f,
+		-1 / a, -a, 0.0f,
+		1 / a, -a, 0.0f,
 
-		 //edges left right
-		 -a, 0.0f, -1/a,
-		 -a, 0.0f, 1/a,
-		 a, 0.0f, -1/a,
-		 a, 0.0f, 1/a
-		 
+		//edges left right
+		-a, 0.0f, -1 / a,
+		-a, 0.0f, 1 / a,
+		a, 0.0f, -1 / a,
+		a, 0.0f, 1 / a
+		*/
 	};
+
 	
-	const GLuint indices[] = {
-		0,2,1,  0,3,2,
-		4,3,0,  4,7,3,
-		4,1,5,  4,0,1,
-		3,6,2,  3,7,6,
-		1,6,5,  1,2,6,
-		7,5,6,  7,4,5
-	};
-
-	glGenBuffers(2, &vStructureId);
-	CheckError("GenBuffers(2, StructureId)");
+	glGenBuffers(1, &vStructureId);
+	CheckError("GenBuffers(1, StructureId)");
+	glEnableVertexAttribArray(0);
+	CheckError("EnableVertexAttriArray(0)");
 	glBindBuffer(GL_ARRAY_BUFFER, vStructureId);
 	CheckError("BindBuffer(Structre)");
 	glBufferData(GL_ARRAY_BUFFER, sizeof(structure), structure, GL_STATIC_DRAW);
 	CheckError("Bufferdata()");
-	glEnableVertexAttribArray(0);
-	CheckError("EnableVertexAttriArray(0)");
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	CheckError("VertexAttribPointer(0, 3,...)");
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	CheckError("VertexAttribPointer(0, ");
 
+	const GLuint indices[] = {
+		0, 2, 1, 0, 3, 2,  //back
+		6, 4, 5, 6, 7, 4,  //button
+		8, 9, 10, 8, 11, 9,  //left
+		12, 13, 14, 12, 15, 13,  //right
+		16, 18, 17, 16, 19, 20,  //top 
+		23, 20, 21, 23, 22, 20  //front
+	};
 	
-	//glGenBuffers(3, &vBufferId);
-	//CheckError("GenBuffers(3, BufferId)");
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vBufferId);
-	CheckError("BindBuffer(Indices)");
+	glGenBuffers(1, &indexId);
+	CheckError("GenBuffers(1, indexId)");
+	glEnableVertexAttribArray(1);
+	CheckError("EnableVertexAttriArray(1)");
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
+	CheckError("BindBuffer(indexId");
+
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	CheckError("BufferData(indices)");
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	CheckError("VertexAttribPointer(1, ");
 
+    GLfloat normals[] = {
+		1.0, 0.0f, 0.0f,  //back
+		1.0, 0.0f, 0.0f,  //back
+		1.0, 0.0f, 0.0f,  //back
+		1.0, 0.0f, 0.0f,  //back
+		1.0, 0.5f, 0.0f, //down
+		1.0, 0.5f, 0.0f, //down
+		1.0, 0.5f, 0.0f, //down
+		1.0, 0.5f, 0.0f, //down
+		0.0, 1.0f, 0.0f,  //left
+		0.0, 1.0f, 0.0f,  //left
+		0.0, 1.0f, 0.0f,  //left
+		0.0, 1.0f, 0.0f,  //left
+		1.0, 0.5f, 0.5f,  //right
+		1.0, 0.5f, 0.5f,  //right
+		1.0, 0.5f, 0.5f,  //right
+		1.0, 0.5f, 0.5f,  //right
+		0.0, 0.5f, 0.5f,  //up
+		0.0, 0.5f, 0.5f,  //up
+		0.0, 0.5f, 0.5f,  //up
+		0.0, 0.5f, 0.5f,  //up
+		0.3, 0.3f, 0.3f,  //front
+		0.3, 0.3f, 0.3f,  //front
+		0.3, 0.3f, 0.3f,  //front
+		0.3, 0.3f, 0.3f,  //front
+	};
+
+	glGenBuffers(1, &normalId);
+	CheckError("GenBuffers(1, normalId)");
+    glEnableVertexAttribArray(2);
+	CheckError("EnableVertexAttriArray(2)");
+	glBindBuffer(GL_ARRAY_BUFFER, normalId);
+	CheckError("BindBuffer(normalId)");
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+	CheckError("BufferData(indices)");
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	CheckError("VertexAttribPointer(2, ");
+	
 	//initial camera position and orientation
-	camera.p_camera = glm::vec3(0.0f, 0.0f, -0.2f);
+	camera.p_camera = glm::vec3(4.0f, 3.0f, 3.0f);
 	camera.p_lookat = glm::vec3(0.0f, 0.0f, 0.0f);
-	camera.v_up = glm::vec3(0.0f, 1.0f, 1.0f);
+	camera.v_up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	//init view pyramid
-	view.beta = 60;
+	view.beta = 45;
 	view.z_n = 0.1f;
-	view.z_f = 400;
+	view.z_f = 100.0f;
 	view.aspect = static_cast<float>(viewport_width / viewport_height);
-	view.h = -2 * view.z_n * tan(view.beta / 2);
+	view.h = -2.0f * view.z_n * tan(view.beta / 2.0f);
 
 	//Calculate of matrices
-	ProjectionMatrix = {1/ (view.aspect * view.h), 0, 0, 0,
-	                             0, 1/view.h, 0, 0,
-	                             0, 0, - (view.z_f + view.z_n) / (view.z_f - view.z_n), -1,
-	                             0, 0, - (2 * view.z_f * view.z_n) / (view.z_f - view.z_n), 0};
+	//ProjectionMatrix = {1/ (view.aspect * view.h), 0, 0, 0,
+	//                             0, 1/view.h, 0, 0,
+	//                             0, 0, - (view.z_f + view.z_n) / (view.z_f - view.z_n), -1,
+	//                             0, 0, - (2 * view.z_f * view.z_n) / (view.z_f - view.z_n), 0};
+	ProjectionMatrix = glm::perspective(view.beta, view.aspect, view.z_n, view.z_f);
 
 	ViewMatrix =  glm::lookAt(
 		camera.p_camera,
@@ -257,10 +329,7 @@ void Renderer::createNaiveStructure(void)
 		camera.v_up
 		);
 
-	ModelMatrix = {1, 0, 0, 0,
-	               0, 1, 0, 0,
-	               0, 0, 1, 0,
-	               0, 0, 0, 1};
+	ModelMatrix = glm::mat4(1.0f);
 
 	//upload matrix to shader
 	GLint uniTrans = glGetUniformLocation(programmID, "proj");
@@ -269,7 +338,7 @@ void Renderer::createNaiveStructure(void)
 	GLint uniView = glGetUniformLocation(programmID, "view");
 	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
 
-	GLint uniModel = glGetUniformLocation(programmID, "model");
+	uniModel = glGetUniformLocation(programmID, "model");
 	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
 }
 
@@ -284,11 +353,31 @@ void Renderer::render()
 
 	glViewport(0, 0, viewport_width, viewport_height);
 
+	float CubeAngle, delta;
+	clock_t Now = clock();
+	if (LastTime == 0)
+		LastTime = Now;
+
+	delta = float(Now - LastTime);
+	RotateAngle += 45.0f * ((float)(Now) / (CLOCKS_PER_SEC));
+	//RotateAngle += 45.0f * ((float)(Now - LastTime) / CLOCKS_PER_SEC);
+	
+	//CubeAngle = RotateAngle * static_cast<float>(3.14159265358979323846 / 180);
+	CubeAngle = static_cast<float>(3.14159265358979323846 / 60) * ((float)(Now) / (CLOCKS_PER_SEC));
+	//std::cout << RotateAngle << " " << CubeAngle << std::endl;
+	LastTime = Now;
+
+	ModelMatrix = { cos(CubeAngle), 0, -sin(CubeAngle), 0,
+		0, 1, 0, 0,
+		sin(CubeAngle), 0, cos(CubeAngle), 0,
+		0, 0, 0, 1 };
+
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
 	
-	//glTranslated(-3.0, 1.5, -6);
-	//glScaled(0.5, 0.5, 0.5);
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
+	
+	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	
 	context.swapBuffers();
 }
