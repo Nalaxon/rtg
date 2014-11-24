@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <cmath>
 
+static float PI = 3.14159265358979323846f;
+
 Renderer::Renderer(GL::platform::Window& window)
 	: context(window)
 {
@@ -267,30 +269,30 @@ void Renderer::createNaiveStructure(void)
 	CheckError("VertexAttribPointer(1, ");
 
     GLfloat normals[] = {
-		1.0, 0.0f, 0.0f,  //back
-		1.0, 0.0f, 0.0f,  //back
-		1.0, 0.0f, 0.0f,  //back
-		1.0, 0.0f, 0.0f,  //back
-		1.0, 0.5f, 0.0f, //down
-		1.0, 0.5f, 0.0f, //down
-		1.0, 0.5f, 0.0f, //down
-		1.0, 0.5f, 0.0f, //down
-		0.0, 1.0f, 0.0f,  //left
-		0.0, 1.0f, 0.0f,  //left
-		0.0, 1.0f, 0.0f,  //left
-		0.0, 1.0f, 0.0f,  //left
-		1.0, 0.5f, 0.5f,  //right
-		1.0, 0.5f, 0.5f,  //right
-		1.0, 0.5f, 0.5f,  //right
-		1.0, 0.5f, 0.5f,  //right
-		0.0, 0.5f, 0.5f,  //up
-		0.0, 0.5f, 0.5f,  //up
-		0.0, 0.5f, 0.5f,  //up
-		0.0, 0.5f, 0.5f,  //up
-		0.3, 0.3f, 0.3f,  //front
-		0.3, 0.3f, 0.3f,  //front
-		0.3, 0.3f, 0.3f,  //front
-		0.3, 0.3f, 0.3f,  //front
+		0.0f, 0.0f, -1.0f,  //back
+		0.0f, 0.0f, -1.0f,  //back
+		0.0f, 0.0f, -1.0f,  //back
+		0.0f, 0.0f, -1.0f,  //back
+		0.0f, -1.0f, 0.0f, //down
+		0.0f, -1.0f, 0.0f, //down
+		0.0f, -1.0f, 0.0f, //down
+		0.0f, -1.0f, 0.0f, //down
+		-1.0f, 0.0f, 0.0f,  //left
+		-1.0f, 0.0f, 0.0f,  //left
+		-1.0f, 0.0f, 0.0f,  //left
+		-1.0f, 0.0f, 0.0f,  //left
+		1.0f, 0.0f, 0.0f,  //right
+		1.0f, 0.0f, 0.0f,  //right
+		1.0f, 0.0f, 0.0f,  //right
+		1.0f, 0.0f, 0.0f,  //right
+		0.0f, 1.0f, 0.0f,  //up
+		0.0f, 1.0f, 0.0f,  //up
+		0.0f, 1.0f, 0.0f,  //up
+		0.0f, 1.0f, 0.0f,  //up
+		0.0f, 0.0f, 1.0f,  //front
+		0.0f, 0.0f, 1.0f,  //front
+		0.0f, 0.0f, 1.0f,  //front
+		0.0f, 0.0f, 1.0f,  //front
 	};
 
 	glGenBuffers(1, &normalId);
@@ -318,8 +320,15 @@ void Renderer::createNaiveStructure(void)
 
 	//light posiiton
 	glm::vec3 light = glm::vec3(5.0f, 6.0f, 2.0f);
-	GLint lightId = glGetUniformLocation(programmID, "light");
-	glUniform1fv(lightId, 1, glm::value_ptr(light));
+	lightId = glGetUniformLocation(programmID, "light");
+	CheckError("GetUniformLocation(light");
+	glUniform3fv(lightId, 1, glm::value_ptr(light));
+	CheckError("Uniform1fv(lightId");
+
+	//diffuse reflectance
+	glm::vec3 f_r = glm::vec3(0.5f, 0.5f, 0.3f);
+	GLint f_rId = glGetUniformLocation(programmID, "f_r");
+	glUniform3fv(f_rId, 1, glm::value_ptr(f_r));
 
 	//Calculate of matrices
 	//ProjectionMatrix = {1/ (view.aspect * view.h), 0, 0, 0,
@@ -368,7 +377,7 @@ void Renderer::render()
 	//RotateAngle += 45.0f * ((float)(Now - LastTime) / CLOCKS_PER_SEC);
 	
 	//CubeAngle = RotateAngle * static_cast<float>(3.14159265358979323846 / 180);
-	CubeAngle = static_cast<float>(3.14159265358979323846 / 60) * ((float)(Now) / (CLOCKS_PER_SEC));
+	CubeAngle = static_cast<float>(PI / 60) * ((float)(Now) / (CLOCKS_PER_SEC));
 	//std::cout << RotateAngle << " " << CubeAngle << std::endl;
 	LastTime = Now;
 
