@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <map>
 
 static float PI = 3.14159265358979323846f;
 
@@ -168,42 +169,42 @@ void Renderer::createNaiveStructure(void)
 	float a = (1 + std::sqrt(5.0f)) / 2;
 	//dodecahedron
 	
-	GLfloat structure[] = {
+	std::vector<glm::vec3> structure;
 		//Back
-		-1.0f, -1.0f, 1.0f,  //0
-		-1.0f, 1.0f, 1.0f,   //1
-		1.0f, 1.0f, 1.0f,    //2
-		1.0f, -1.0f, 1.0f,   //3
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //0
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //1
+	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //2
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //3
 
         //Buttom
-		1.0f, -1.0f, 1.0f,   //4
-		-1.0f, -1.0f, 1.0f,  //5
-		-1.0f, -1.0f, -1.0f, //6
-		1.0f, -1.0f, -1.0f,  //7
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //4
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //5
+	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f)); //6
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //7
 		
 		//Left
-		-1.0f, -1.0f, -1.0f, //8
-		-1.0f, 1.0f, 1.0f,   //9
-		-1.0f, 1.0f, -1.0f,  //10
-		-1.0f, -1.0f, 1.0f,  //11
+	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f)); //8
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //9
+	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //10
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //11
 
 		//Right
-		1.0f, -1.0f, 1.0f,   //12
-		1.0f, 1.0f, -1.0f,   //13
-		1.0f, 1.0f, 1.0f,    //14
-		1.0f, -1.0f, -1.0f,  //15
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //12
+	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //13
+	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //14
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //15
 
 		//Top
-		-1.0f, 1.0f, 1.0f,   //16
-		-1.0f, 1.0f, -1.0f,  //17
-		1.0f, 1.0f, -1.0f,   //18
-		1.0f, 1.0f, 1.0f,    //19
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //16
+	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //17
+	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //18
+	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //19
 
 		//Front
-		-1.0f, 1.0f, -1.0f,  //20
-		1.0f, 1.0f, -1.0f,   //21
-		-1.0f, -1.0f, -1.0f,  //22
-		1.0f, -1.0f, -1.0f,  //23
+	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //20
+	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //21
+	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //22
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //23
 
 		//basic quader
 	/*	-1.0f, 1.0f, 1.0f,     //foreground
@@ -233,7 +234,6 @@ void Renderer::createNaiveStructure(void)
 		a, 0.0f, -1 / a,
 		a, 0.0f, 1 / a
 		*/
-	};
 
 	
 	glGenBuffers(1, &vStructureId);
@@ -242,7 +242,7 @@ void Renderer::createNaiveStructure(void)
 	CheckError("EnableVertexAttriArray(0)");
 	glBindBuffer(GL_ARRAY_BUFFER, vStructureId);
 	CheckError("BindBuffer(Structre)");
-	glBufferData(GL_ARRAY_BUFFER, sizeof(structure), structure, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, structure.size() *sizeof(glm::vec3), &structure[0], GL_STATIC_DRAW);
 	CheckError("Bufferdata()");
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	CheckError("VertexAttribPointer(0, ");
@@ -268,7 +268,10 @@ void Renderer::createNaiveStructure(void)
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	CheckError("VertexAttribPointer(1, ");
 
-    GLfloat normals[] = {
+	std::vector<glm::vec3> normals;
+	calculateNormals(sizeof(indices), indices, structure, normals);
+
+    /*GLfloat normals[] = {
 		0.0f, 0.0f, -1.0f,  //back
 		0.0f, 0.0f, -1.0f,  //back
 		0.0f, 0.0f, -1.0f,  //back
@@ -293,7 +296,7 @@ void Renderer::createNaiveStructure(void)
 		0.0f, 0.0f, 1.0f,  //front
 		0.0f, 0.0f, 1.0f,  //front
 		0.0f, 0.0f, 1.0f,  //front
-	};
+	};*/
 
 	glGenBuffers(1, &normalId);
 	CheckError("GenBuffers(1, normalId)");
@@ -301,7 +304,7 @@ void Renderer::createNaiveStructure(void)
 	CheckError("EnableVertexAttriArray(2)");
 	glBindBuffer(GL_ARRAY_BUFFER, normalId);
 	CheckError("BindBuffer(normalId)");
-	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3) , &normals[0], GL_STATIC_DRAW);
 	CheckError("BufferData(indices)");
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	CheckError("VertexAttribPointer(2, ");
@@ -354,6 +357,11 @@ void Renderer::createNaiveStructure(void)
 
 	uniModel = glGetUniformLocation(programmID, "model");
 	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+
+	// Enable depth test
+	glEnable(GL_DEPTH_TEST);
+	// Accept fragment if it closer to the camera than the former one
+	glDepthFunc(GL_LESS);
 }
 
 void Renderer::destroyNaiveStructure(void)
@@ -394,6 +402,35 @@ void Renderer::render()
 	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	
 	context.swapBuffers();
+}
+
+
+void Renderer::calculateNormals(const int ind_size, const GLuint* indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals)
+{
+	static int offset = 3;
+
+	glm::vec3 v1, v2, v3, a, b, cross;
+	std::cout << "size of indices: " << ind_size << "sizeof(unsigned int) " << sizeof(GLuint) <<  "  size of vertices: " << vertices.size() << std::endl;
+
+	for (int i = 0; (i < ind_size/sizeof(GLuint)) ; i += offset)
+	{
+		std::cout << i << ": " << indices[i] << std::endl;
+		v1 = vertices[indices[i]];
+		v2 = vertices[indices[i+1]];
+		v3 = vertices[indices[i+2]];
+		a = v2 - v1;
+		b = v3 - v2;
+
+		cross = glm::cross(a, b);
+
+		std::cout << "(" << v2.x << "/" << v2.y << "/" << v2.z << ") - (" << v1.x << "/" << v1.y << "/" << v1.z << ") = (";
+		std::cout << a.x << "/" << a.y << "/" << a.z << ")" << std::endl;
+		std::cout << "(" << v3.x << "/" << v3.y << "/" << v3.z << ") - (" << v2.x << "/" << v2.y << "/" << v2.z << ") = (";
+		std::cout << b.x << "/" << b.y << "/" << b.z << ")" << std::endl;
+		std::cout << "X= " << cross.x << "/" << cross.y << "/" << cross.z << std::endl;
+
+ 		normals.push_back(cross);
+	}
 }
 
 void  Renderer::CheckError(const std::string funcName)

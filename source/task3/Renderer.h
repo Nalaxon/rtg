@@ -13,6 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <time.h>
+#include <vector>
 
 typedef struct {
 	glm::vec3 v_up;
@@ -56,6 +57,7 @@ private:
 	clock_t LastTime;
 	float RotateAngle;
 	void  CheckError(const std::string funcName);
+	void calculateNormals(const int ind_size, const GLuint* indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals);
 
 public:
 	Renderer(const Renderer&) = delete;
