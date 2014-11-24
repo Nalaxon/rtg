@@ -1,5 +1,9 @@
 #version 440
-in vec4 FragmentColor;
+in vec4 FragmentNormal;
+in vec4 pos;
+
+uniform vec4 f_r;
+uniform vec3 light;
 
 out vec4 Color;
 
@@ -7,5 +11,7 @@ void main(void)
 
 {
   
-   Color = FragmentColor;
+   vec4 l =  vec4(1.0f) * max(dot(FragmentNormal, (vec4(light, 1.0f) - pos)), 0);
+
+   Color = f_r * l;
 }

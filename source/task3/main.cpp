@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 	//const char* FRAGMENT_SHADER_SOURCE = "./source/task3/fragmentshader.glsl";
 	try
 	{
-		GL::platform::Window window("Assignment 3 More complex shapes", 800, 600, 0, 0, false, 4, 3);
+		GL::platform::Window window("Assignment 3 More complex shapes", 800, 600, 200, 0, false, 4, 3);
 
 		Renderer renderer(window);
 

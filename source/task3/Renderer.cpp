@@ -11,6 +11,13 @@
 
 static float PI = 3.14159265358979323846f;
 
+//bool fncomp(GLuint lhs, GLuint rhs) { return lhs < rhs; }
+
+//struct classcomp {
+//	bool operator() (const GLuint& lhs, const GLuint& rhs) const
+//	{return lhs < rhs; }
+//};
+
 Renderer::Renderer(GL::platform::Window& window)
 	: context(window)
 {
@@ -310,7 +317,7 @@ void Renderer::createNaiveStructure(void)
 	CheckError("VertexAttribPointer(2, ");
 	
 	//initial camera position and orientation
-	camera.p_camera = glm::vec3(4.0f, 3.0f, 3.0f);
+	camera.p_camera = glm::vec3(0.0f, 3.0f, 3.0f);
 	camera.p_lookat = glm::vec3(0.0f, 0.0f, 0.0f);
 	camera.v_up = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -322,16 +329,16 @@ void Renderer::createNaiveStructure(void)
 	view.h = -2.0f * view.z_n * tan(view.beta / 2.0f);
 
 	//light posiiton
-	glm::vec3 light = glm::vec3(5.0f, 6.0f, 2.0f);
+	glm::vec3 light = glm::vec3(-3.0f, 5.0f, 0.0f);
 	lightId = glGetUniformLocation(programmID, "light");
 	CheckError("GetUniformLocation(light");
 	glUniform3fv(lightId, 1, glm::value_ptr(light));
 	CheckError("Uniform1fv(lightId");
 
 	//diffuse reflectance
-	glm::vec3 f_r = glm::vec3(0.5f, 0.5f, 0.3f);
+	glm::vec4 f_r = glm::vec4(0.5f, 0.5f, 0.3f, 1.0f) / PI;
 	GLint f_rId = glGetUniformLocation(programmID, "f_r");
-	glUniform3fv(f_rId, 1, glm::value_ptr(f_r));
+	glUniform4fv(f_rId, 1, glm::value_ptr(f_r));
 
 	//Calculate of matrices
 	//ProjectionMatrix = {1/ (view.aspect * view.h), 0, 0, 0,
@@ -385,7 +392,7 @@ void Renderer::render()
 	//RotateAngle += 45.0f * ((float)(Now - LastTime) / CLOCKS_PER_SEC);
 	
 	//CubeAngle = RotateAngle * static_cast<float>(3.14159265358979323846 / 180);
-	CubeAngle = static_cast<float>(PI / 60) * ((float)(Now) / (CLOCKS_PER_SEC));
+	CubeAngle = static_cast<float>(PI / 30) * ((float)(Now) / (CLOCKS_PER_SEC));
 	//std::cout << RotateAngle << " " << CubeAngle << std::endl;
 	LastTime = Now;
 
@@ -409,27 +416,37 @@ void Renderer::calculateNormals(const int ind_size, const GLuint* indices, const
 {
 	static int offset = 3;
 
-	glm::vec3 v1, v2, v3, a, b, cross;
-	std::cout << "size of indices: " << ind_size << "sizeof(unsigned int) " << sizeof(GLuint) <<  "  size of vertices: " << vertices.size() << std::endl;
+	glm::fvec3 v1, v2, v3, a, b, cross;
 
-	for (int i = 0; (i < ind_size/sizeof(GLuint)) ; i += offset)
+	//std::cout << "size of indices: " << ind_size << "sizeof(unsigned int) " << sizeof(GLuint) <<  "  size of vertices: " << vertices.size() << std::endl;
+
+	int i;
+	for (unsigned int i = 0; (i < ind_size / sizeof(GLuint)); i += offset)
 	{
-		std::cout << i << ": " << indices[i] << std::endl;
+		
 		v1 = vertices[indices[i]];
-		v2 = vertices[indices[i+1]];
-		v3 = vertices[indices[i+2]];
+		v2 = vertices[indices[i + 1]];
+		v3 = vertices[indices[i + 2]];
 		a = v2 - v1;
 		b = v3 - v2;
 
 		cross = glm::cross(a, b);
+		cross = glm::normalize(cross);
 
-		std::cout << "(" << v2.x << "/" << v2.y << "/" << v2.z << ") - (" << v1.x << "/" << v1.y << "/" << v1.z << ") = (";
-		std::cout << a.x << "/" << a.y << "/" << a.z << ")" << std::endl;
-		std::cout << "(" << v3.x << "/" << v3.y << "/" << v3.z << ") - (" << v2.x << "/" << v2.y << "/" << v2.z << ") = (";
-		std::cout << b.x << "/" << b.y << "/" << b.z << ")" << std::endl;
-		std::cout << "X= " << cross.x << "/" << cross.y << "/" << cross.z << std::endl;
+		//std::cout << "v1(" << v1.x << "," << v1.y << "," << v1.z << ") / v2(";
+		//std::cout << v2.x << "," << v2.y << "," << v2.z << ") / v3(";
+		//std::cout << v3.x << "," << v3.y << "," << v3.z << ")" << std::endl;
+		 
+		//std::cout << "a(" << a.x << "," << a.y << "," << a.z << ") / b(" << b.x << "," << b.y << "," << b.z << ")" << std::endl;
+		//std::cout << "X(" << cross.x << "," << cross.y << "," << cross.z << std::endl;
 
- 		normals.push_back(cross);
+		normals.push_back(cross);  //overtake normalised norm
+		if (i % 2 == 0)
+		{
+			normals.push_back(cross);
+			normals.push_back(cross);
+		}
+		
 	}
 }
 
