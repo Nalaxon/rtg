@@ -316,6 +316,11 @@ void Renderer::createNaiveStructure(void)
 	view.aspect = static_cast<float>(viewport_width / viewport_height);
 	view.h = -2.0f * view.z_n * tan(view.beta / 2.0f);
 
+	//light posiiton
+	glm::vec3 light = glm::vec3(5.0f, 6.0f, 2.0f);
+	GLint lightId = glGetUniformLocation(programmID, "light");
+	glUniform1fv(lightId, 1, glm::value_ptr(light));
+
 	//Calculate of matrices
 	//ProjectionMatrix = {1/ (view.aspect * view.h), 0, 0, 0,
 	//                             0, 1/view.h, 0, 0,

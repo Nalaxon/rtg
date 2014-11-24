@@ -46,6 +46,7 @@ private:
 	GLuint ColorBufferId;
 	GLuint normalId;
 	GLuint indexId;
+	GLuint lightId;
 	glm::mat4 ModelMatrix;
 	GLint uniModel;
 	glm::mat4 ViewMatrix;

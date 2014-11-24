@@ -5,6 +5,7 @@ layout(location=2) in vec3 in_normals;
 uniform mat4 proj;
 uniform mat4 view;
 uniform mat4 model;
+uniform vec3 light;
 
 out vec4 FragmentColor;
 void main(void)
