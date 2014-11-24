@@ -250,7 +250,7 @@ void Renderer::createNaiveStructure(void)
 		6, 4, 5, 6, 7, 4,  //button
 		8, 9, 10, 8, 11, 9,  //left
 		12, 13, 14, 12, 15, 13,  //right
-		16, 18, 17, 16, 19, 20,  //top 
+		16, 18, 17, 16, 19, 18,  //top 
 		23, 20, 21, 23, 22, 20  //front
 	};
 	
