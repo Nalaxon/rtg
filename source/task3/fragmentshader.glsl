@@ -1,10 +1,11 @@
 #version 440
-in vec4 FrontColor;
-out vec4 out_FragColor;
+in vec4 FragmentColor;
+
+out vec4 Color;
 
 void main(void)
 
 {
   
-   out_FragColor = FrontColor;
+   Color = FragmentColor;
 }
