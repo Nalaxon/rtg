@@ -11,13 +11,6 @@
 
 static float PI = 3.14159265358979323846f;
 
-//bool fncomp(GLuint lhs, GLuint rhs) { return lhs < rhs; }
-
-//struct classcomp {
-//	bool operator() (const GLuint& lhs, const GLuint& rhs) const
-//	{return lhs < rhs; }
-//};
-
 Renderer::Renderer(GL::platform::Window& window)
 	: context(window)
 {
@@ -278,33 +271,6 @@ void Renderer::createNaiveStructure(void)
 	std::vector<glm::vec3> normals;
 	calculateNormals(sizeof(indices), indices, structure, normals);
 
-    /*GLfloat normals[] = {
-		0.0f, 0.0f, -1.0f,  //back
-		0.0f, 0.0f, -1.0f,  //back
-		0.0f, 0.0f, -1.0f,  //back
-		0.0f, 0.0f, -1.0f,  //back
-		0.0f, -1.0f, 0.0f, //down
-		0.0f, -1.0f, 0.0f, //down
-		0.0f, -1.0f, 0.0f, //down
-		0.0f, -1.0f, 0.0f, //down
-		-1.0f, 0.0f, 0.0f,  //left
-		-1.0f, 0.0f, 0.0f,  //left
-		-1.0f, 0.0f, 0.0f,  //left
-		-1.0f, 0.0f, 0.0f,  //left
-		1.0f, 0.0f, 0.0f,  //right
-		1.0f, 0.0f, 0.0f,  //right
-		1.0f, 0.0f, 0.0f,  //right
-		1.0f, 0.0f, 0.0f,  //right
-		0.0f, 1.0f, 0.0f,  //up
-		0.0f, 1.0f, 0.0f,  //up
-		0.0f, 1.0f, 0.0f,  //up
-		0.0f, 1.0f, 0.0f,  //up
-		0.0f, 0.0f, 1.0f,  //front
-		0.0f, 0.0f, 1.0f,  //front
-		0.0f, 0.0f, 1.0f,  //front
-		0.0f, 0.0f, 1.0f,  //front
-	};*/
-
 	glGenBuffers(1, &normalId);
 	CheckError("GenBuffers(1, normalId)");
     glEnableVertexAttribArray(2);
@@ -366,9 +332,9 @@ void Renderer::createNaiveStructure(void)
 	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
 
 	// Enable depth test
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS);
+	//glDepthFunc(GL_LESS);
 }
 
 void Renderer::destroyNaiveStructure(void)
