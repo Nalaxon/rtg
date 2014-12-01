@@ -175,7 +175,21 @@ void Renderer::createStructure(void)
 	glBindVertexArray(vaoId);
 	CheckError("BindVertexArray(vaoId)");
 
-	std::vector<glm::vec3> structure;
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec2> uvs;
+	std::vector<glm::vec3> normals;
+
+	loadOBJ(".\\..\\..\\..\\..\\assets\vader.obj", vertices, uvs, normals);
+
+	glGenBuffers(1, &structureVertexId);
+	glBindBuffer(GL_ARRAY_BUFFER, structureVertexId);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+
+	glGenBuffers(1, &structureUvId);
+	glBindBuffer(GL_ARRAY_BUFFER, structureUvId);
+	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+
+
 
 }
 

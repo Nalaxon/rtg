@@ -43,7 +43,7 @@ private:
 	GLuint fragmentShaderId;
 	GLuint vaoId;
 	GLuint structureVertexId;
-	GLuint vBufferId;
+	GLuint structureUvId;
 	GLuint colorBufferId;
 	GLuint normalId;
 	GLuint indexId;
@@ -58,6 +58,9 @@ private:
 	float rotateAngle;
 	void  CheckError(const std::string funcName);
 	void calculateNormals(const int ind_size, const GLuint* indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals);
+	bool loadOBJ(const char * path, std::vector<glm::vec3> & out_vertices, std::vector<glm::vec2> & out_uvs, std::vector<glm::vec3> & out_normals);
+
+
 
 public:
 	Renderer(const Renderer&) = delete;
