@@ -170,7 +170,8 @@ void Renderer::createNaiveStructure(void)
 	//dodecahedron
 	
 	std::vector<glm::vec3> structure;
-		//Back
+	/*
+	//Back
 	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //0
 	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //1
 	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //2
@@ -204,36 +205,37 @@ void Renderer::createNaiveStructure(void)
 	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //20
 	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //21
 	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //22
-	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //23
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //23 
+	*/
 
-		//basic quader
-	/*	-1.0f, 1.0f, 1.0f,     //foreground
-		-1.0f, -1.0f, -1.0f,
-		1.0f, 1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
-		-1.0f, 1.0f, 1.0f,     //background
-		-1.0f, -1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, -1.0f, 1.0f,
+	//basic quader
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));     //foreground
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));     //foreground-1.0f, -1.0f, -1.0f,
+	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));     //background
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));
+	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));
 
 		//edge fore and background
-		0.0f, 1 / a, -a,
-		0.0f, -1 / a, -a,
-		0.0f, 1 / a, a,
-		0.0f, -1 / a, a,
+	structure.push_back(glm::vec3(0.0f, 1 / a, -a));
+	structure.push_back(glm::vec3(0.0f, -1 / a, -a));
+	structure.push_back(glm::vec3(0.0f, 1 / a, a));
+	structure.push_back(glm::vec3(0.0f, -1 / a, a));
 
 		//edges top buttom
-		-1 / a, a, 0.0f,
-		1 / a, a, 0.0f,
-		-1 / a, -a, 0.0f,
-		1 / a, -a, 0.0f,
+	structure.push_back(glm::vec3(-1 / a, a, 0.0f));
+	structure.push_back(glm::vec3(1 / a, a, 0.0f));
+	structure.push_back(glm::vec3(-1 / a, -a, 0.0f));
+	structure.push_back(glm::vec3(1 / a, -a, 0.0f));
 
 		//edges left right
-		-a, 0.0f, -1 / a,
-		-a, 0.0f, 1 / a,
-		a, 0.0f, -1 / a,
-		a, 0.0f, 1 / a
-		*/
+	structure.push_back(glm::vec3(-a, 0.0f, -1 / a));
+	structure.push_back(glm::vec3(-a, 0.0f, 1 / a));
+	structure.push_back(glm::vec3(a, 0.0f, -1 / a));
+	structure.push_back(glm::vec3(a, 0.0f, 1 / a));
+	
 
 	
 	glGenBuffers(1, &vStructureId);
@@ -248,12 +250,14 @@ void Renderer::createNaiveStructure(void)
 	CheckError("VertexAttribPointer(0, ");
 
 	const GLuint indices[] = {
-		0, 2, 1, 0, 3, 2,  //back
+
+		/*0, 2, 1, 0, 3, 2,  //back
 		6, 4, 5, 6, 7, 4,  //button
 		8, 9, 10, 8, 11, 9,  //left
 		12, 13, 14, 12, 15, 13,  //right
 		16, 18, 17, 16, 19, 18,  //top 
 		23, 20, 21, 23, 22, 20  //front
+		*/
 	};
 	
 	glGenBuffers(1, &indexId);
