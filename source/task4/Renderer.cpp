@@ -33,6 +33,10 @@ void Renderer::render()
 
 	glViewport(0, 0, viewport_width, viewport_height);
 
+	
+	//for (int i = 0; i < vertices.size(); i += 3)
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size()*3);
+
 	context.swapBuffers();
 }
 
@@ -175,22 +179,85 @@ void Renderer::createStructure(void)
 	glBindVertexArray(vaoId);
 	CheckError("BindVertexArray(vaoId)");
 
-	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec2> uvs;
-	std::vector<glm::vec3> normals;
-
-	loadOBJ(".\\..\\..\\..\\..\\assets\vader.obj", vertices, uvs, normals);
-
+	char* objpath = ".\\..\\..\\..\\..\\assets\\vader.obj";
+	if (true != loadOBJ(objpath, vertices, uvs, normals))
+	{
+		std::cout << "Loading object failed! " << objpath << std::endl;
+		getchar();
+		exit(-1);
+	}
+		
 	glGenBuffers(1, &structureVertexId);
+	CheckError("genBuffer(VertexId");
+	glEnableVertexAttribArray(0);
+	CheckError("EnableVertexAttriArray(0)");
 	glBindBuffer(GL_ARRAY_BUFFER, structureVertexId);
+	CheckError("BindBuffer(structureVertexId");
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+	CheckError("BufferData(vertices");
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	CheckError("VertexAttribPointer(0, ");
+	//glDisableVertexAttribArray(0);
 
-	glGenBuffers(1, &structureUvId);
-	glBindBuffer(GL_ARRAY_BUFFER, structureUvId);
-	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &normalId);
+	CheckError("genBuffers(normalId");
+	glEnableVertexAttribArray(1);
+	CheckError("EnableVertexAttriArray(1)");
+	glBindBuffer(GL_ARRAY_BUFFER, normalId);
+	CheckError("BindBuffer(normalId");
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+	CheckError("BufferData(normals");
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	CheckError("VertexAttribPointer(1, ");
+	//glDisableVertexAttribArray(1);
 
+	//glGenBuffers(1, &structureUvId);
+	//glBindBuffer(GL_ARRAY_BUFFER, structureUvId);
+	//glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
 
+	//initial camera position and orientation
+	camera.p_camera = glm::vec3(0.0f, 3.0f, 10.0f);
+	camera.p_lookat = glm::vec3(0.0f, 0.0f, 0.0f);
+	camera.v_up = glm::vec3(0.0f, 1.0f, 0.0f);
 
+	//init view pyramid
+	view.beta = 45;
+	view.z_n = 0.1f;
+	view.z_f = 100.0f;
+	view.aspect = static_cast<float>(viewport_width / viewport_height);
+	view.h = -2.0f * view.z_n * tan(view.beta / 2.0f);
+
+	//light posiiton
+	glm::vec3 light = glm::vec3(-3.0f, 5.0f, 0.0f);
+	lightId = glGetUniformLocation(programmId, "light");
+	CheckError("GetUniformLocation(light");
+	glUniform3fv(lightId, 1, glm::value_ptr(light));
+	CheckError("Uniform1fv(lightId");
+
+	//diffuse reflectance
+	glm::vec4 f_r = glm::vec4(0.5f, 0.5f, 0.3f, 1.0f) / PI;
+	GLint f_rId = glGetUniformLocation(programmId, "f_r");
+	glUniform4fv(f_rId, 1, glm::value_ptr(f_r));
+
+	projectionMatrix = glm::perspective(view.beta, view.aspect, view.z_n, view.z_f);
+
+	viewMatrix = glm::lookAt(
+		camera.p_camera,
+		camera.p_lookat,
+		camera.v_up
+		);
+
+	modelMatrix = glm::mat4(1.0f);
+
+	//upload matrix to shader
+	GLint uniTrans = glGetUniformLocation(programmId, "proj");
+	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+	GLint uniView = glGetUniformLocation(programmId, "view");
+	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+
+	uniModel = glGetUniformLocation(programmId, "model");
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 }
 
 void Renderer::destroyStructure(void)
@@ -321,6 +388,9 @@ bool Renderer::loadOBJ(
 		glm::vec3 vertex = temp_vertices[vertexIndex - 1];
 		glm::vec2 uv = temp_uvs[uvIndex - 1];
 		glm::vec3 normal = temp_normals[normalIndex - 1];
+
+		//std::cout << "vertex(" << vertex.x << "," << vertex.y << "," << vertex.z << ") / normal(";
+		//std::cout << normal.x << "," << normal.y << "," << normal.z << ")" << std::endl;
 
 		// Put the attributes in buffers
 		out_vertices.push_back(vertex);

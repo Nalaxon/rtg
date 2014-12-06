@@ -48,6 +48,9 @@ private:
 	GLuint normalId;
 	GLuint indexId;
 	GLuint lightId;
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec2> uvs;
+	std::vector<glm::vec3> normals;
 	glm::mat4 modelMatrix;
 	GLint uniModel;
 	glm::mat4 viewMatrix;

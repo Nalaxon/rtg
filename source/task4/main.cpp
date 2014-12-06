@@ -16,20 +16,22 @@ void APIENTRY OpenGLDebugOutputCallback(GLenum source, GLenum type, GLuint id, G
 
 int main(int argc, char* argv[])
 {
-	const char* VERTEX_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task3\\vertexshader.glsl";
-	const char* FRAGMENT_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task3\\fragmentshader.glsl";
+	const char* VERTEX_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task4\\vertexshader.glsl";
+	const char* FRAGMENT_SHADER_SOURCE = ".\\..\\..\\..\\..\\source\\task4\\fragmentshader.glsl";
 	//const char* VERTEX_SHADER_SOURCE = "./source/task3/vertexshader.glsl";
 	//const char* FRAGMENT_SHADER_SOURCE = "./source/task3/fragmentshader.glsl";
 	try
 	{
-		GL::platform::Window window("Assignment 4 — Complex 3D object", 800, 600, 24, 8, false, 3, 3);
+		GL::platform::Window window("Assignment 4 — Complex 3D object", 800, 600, 24, 8, false, 4, 3);
 		Renderer renderer(window);
-		InputHandler input_handler;
+		
 
 		glDebugMessageCallback(OpenGLDebugOutputCallback, nullptr);
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
 		renderer.resize(800, 600);
+
+		InputHandler input_handler;
 
 		renderer.createShader(VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
 		renderer.createStructure();
@@ -45,11 +47,13 @@ int main(int argc, char* argv[])
 	catch (std::exception& e)
 	{
 		std::cout << "error: " << e.what() << std::endl;
+		getchar();
 		return -1;
 	}
 	catch (...)
 	{
 		std::cout << "unknown exception" << std::endl;
+		getchar();
 		return -128;
 	}
 
