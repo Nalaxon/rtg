@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <framework/png.h>
 
 static float PI = 3.14159265358979323846f;
 
@@ -15,8 +16,9 @@ Renderer::Renderer(GL::platform::Window& window)
 	: context(window)
 {
 	glClearColor(0.1f, 0.3f, 1.0f, 1.0f);
-	glClearDepth(1.0f);
+	//glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 
 	window.attach(this);
 }
@@ -32,6 +34,27 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glViewport(0, 0, viewport_width, viewport_height);
+
+	float CubeAngle, delta;
+	clock_t Now = clock();
+	if (lastTime == 0)
+		lastTime = Now;
+
+	delta = float(Now - lastTime);
+	rotateAngle += 45.0f * ((float)(Now) / (CLOCKS_PER_SEC));
+	//RotateAngle += 45.0f * ((float)(Now - LastTime) / CLOCKS_PER_SEC);
+
+	//CubeAngle = RotateAngle * static_cast<float>(3.14159265358979323846 / 180);
+	CubeAngle = static_cast<float>(PI / 30) * ((float)(Now) / (CLOCKS_PER_SEC));
+	//std::cout << RotateAngle << " " << CubeAngle << std::endl;
+	lastTime = Now;
+
+	modelMatrix = { cos(CubeAngle), 0, -sin(CubeAngle), 0,
+		0, 1, 0, 0,
+		sin(CubeAngle), 0, cos(CubeAngle), 0,
+		0, 0, 0, 1 };
+
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 	
 	//for (int i = 0; i < vertices.size(); i += 3)
@@ -186,7 +209,31 @@ void Renderer::createStructure(void)
 		getchar();
 		exit(-1);
 	}
-		
+
+
+	image<std::uint32_t> texture = PNG::loadImage2D(".\\..\\..\\..\\..\\assets\\vader.png");
+	glGenTextures(1, &textureId);
+	CheckError("GenTextures(textureId");
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	CheckError("BindTexture/1");
+	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32UI, width(texture), height(texture));
+	//CheckError("glTexStorage2D()");
+	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width(texture), height(texture), GL_RGBA, GL_UNSIGNED_BYTE, data(texture));
+	//CheckError("glTexSubImage2D(texture");
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width(texture), height(texture), 0, GL_RGBA, GL_UNSIGNED_BYTE, data(texture));
+	CheckError("glTexImage2D");
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+	glActiveTexture(GL_TEXTURE0);
+	CheckError("glActiveTexture");
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	CheckError("BindTexture/2");
+	
+	
+
 	glGenBuffers(1, &structureVertexId);
 	CheckError("genBuffer(VertexId");
 	glEnableVertexAttribArray(0);
@@ -211,9 +258,16 @@ void Renderer::createStructure(void)
 	CheckError("VertexAttribPointer(1, ");
 	//glDisableVertexAttribArray(1);
 
-	//glGenBuffers(1, &structureUvId);
-	//glBindBuffer(GL_ARRAY_BUFFER, structureUvId);
-	//glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &structureUvId);
+	CheckError("genBuffers(UvId");
+	glEnableVertexAttribArray(2);
+	CheckError("EnableVertexAttriArray(2)");
+	glBindBuffer(GL_ARRAY_BUFFER, structureUvId);
+	CheckError("BindBuffer(UV");
+	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+	CheckError("BufferData(UV");
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	CheckError("VertexAttribPointer(2, ");
 
 	//initial camera position and orientation
 	camera.p_camera = glm::vec3(0.0f, 3.0f, 10.0f);
