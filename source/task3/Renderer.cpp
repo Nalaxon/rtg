@@ -300,7 +300,7 @@ void Renderer::createNaiveStructure(void)
 	view.h = -2.0f * view.z_n * tan(view.beta / 2.0f);
 
 	//light posiiton
-	glm::vec3 light = glm::vec3(-3.0f, 5.0f, 0.0f);
+	glm::vec3 light = camera.p_camera;
 	lightId = glGetUniformLocation(programmID, "light");
 	CheckError("GetUniformLocation(light");
 	glUniform3fv(lightId, 1, glm::value_ptr(light));
@@ -327,14 +327,8 @@ void Renderer::createNaiveStructure(void)
 	ModelMatrix = glm::mat4(1.0f);
 
 	//upload matrix to shader
-	GLint uniTrans = glGetUniformLocation(programmID, "proj");
-	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
-
-	GLint uniView = glGetUniformLocation(programmID, "view");
-	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
-
-	uniModel = glGetUniformLocation(programmID, "model");
-	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+	uniMVP = glGetUniformLocation(programmID, "MVP");
+	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix*ViewMatrix*ModelMatrix));
 
 	// Enable depth test
 	//glEnable(GL_DEPTH_TEST);
@@ -372,7 +366,7 @@ void Renderer::render()
 		sin(CubeAngle), 0, cos(CubeAngle), 0,
 		0, 0, 0, 1 };
 
-	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix*ViewMatrix*ModelMatrix));
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
 	
