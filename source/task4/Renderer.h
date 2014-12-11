@@ -53,7 +53,7 @@ private:
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
 	glm::mat4 modelMatrix;
-	GLint uniModel;
+	GLint uniMVP;
 	glm::mat4 viewMatrix;
 	glm::mat4 projectionMatrix;
 	Camera camera;

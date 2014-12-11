@@ -42,11 +42,8 @@ void Renderer::render()
 
 	delta = float(Now - lastTime);
 	rotateAngle += 45.0f * ((float)(Now) / (CLOCKS_PER_SEC));
-	//RotateAngle += 45.0f * ((float)(Now - LastTime) / CLOCKS_PER_SEC);
 
-	//CubeAngle = RotateAngle * static_cast<float>(3.14159265358979323846 / 180);
 	CubeAngle = static_cast<float>(PI / 30) * ((float)(Now) / (CLOCKS_PER_SEC));
-	//std::cout << RotateAngle << " " << CubeAngle << std::endl;
 	lastTime = Now;
 
 	modelMatrix = { cos(CubeAngle), 0, -sin(CubeAngle), 0,
@@ -54,7 +51,7 @@ void Renderer::render()
 		sin(CubeAngle), 0, cos(CubeAngle), 0,
 		0, 0, 0, 1 };
 
-	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, glm::value_ptr(projectionMatrix*viewMatrix*modelMatrix));
 
 	
 	//for (int i = 0; i < vertices.size(); i += 3)
@@ -303,15 +300,8 @@ void Renderer::createStructure(void)
 
 	modelMatrix = glm::mat4(1.0f);
 
-	//upload matrix to shader
-	GLint uniTrans = glGetUniformLocation(programmId, "proj");
-	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-
-	GLint uniView = glGetUniformLocation(programmId, "view");
-	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-
-	uniModel = glGetUniformLocation(programmId, "model");
-	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	uniMVP = glGetUniformLocation(programmId, "MVP");
+	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, glm::value_ptr(projectionMatrix*viewMatrix*modelMatrix));
 }
 
 void Renderer::destroyStructure(void)
