@@ -15,8 +15,9 @@ Renderer::Renderer(GL::platform::Window& window)
 	: context(window)
 {
 	glClearColor(0.1f, 0.3f, 1.0f, 1.0f);
-	glClearDepth(1.0f);
+	//glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 
 	window.attach(this);
 }
@@ -170,7 +171,7 @@ void Renderer::createNaiveStructure(void)
 	//dodecahedron
 	
 	std::vector<glm::vec3> structure;
-	/*
+	
 	//Back
 	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //0
 	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //1
@@ -206,8 +207,8 @@ void Renderer::createNaiveStructure(void)
 	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //21
 	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //22
 	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //23 
-	*/
-
+	
+	/*
 	//basic quader
 	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));     //foreground
 	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));     //foreground-1.0f, -1.0f, -1.0f,
@@ -235,7 +236,7 @@ void Renderer::createNaiveStructure(void)
 	structure.push_back(glm::vec3(-a, 0.0f, 1 / a));
 	structure.push_back(glm::vec3(a, 0.0f, -1 / a));
 	structure.push_back(glm::vec3(a, 0.0f, 1 / a));
-	
+	*/
 
 	
 	glGenBuffers(1, &vStructureId);
@@ -251,13 +252,13 @@ void Renderer::createNaiveStructure(void)
 
 	const GLuint indices[] = {
 
-		/*0, 2, 1, 0, 3, 2,  //back
+		0, 2, 1, 0, 3, 2,  //back
 		6, 4, 5, 6, 7, 4,  //button
 		8, 9, 10, 8, 11, 9,  //left
 		12, 13, 14, 12, 15, 13,  //right
 		16, 18, 17, 16, 19, 18,  //top 
 		23, 20, 21, 23, 22, 20  //front
-		*/
+		
 	};
 	
 	glGenBuffers(1, &indexId);
