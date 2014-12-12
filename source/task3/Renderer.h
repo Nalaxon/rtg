@@ -49,7 +49,7 @@ private:
 	GLuint indexId;
 	GLuint lightId;
 	glm::mat4 ModelMatrix;
-	GLint uniModel;
+	GLint uniMVP;
 	glm::mat4 ViewMatrix;
 	glm::mat4 ProjectionMatrix;
 	Camera camera;
@@ -57,7 +57,9 @@ private:
 	clock_t LastTime;
 	float RotateAngle;
 	void  CheckError(const std::string funcName);
-	void calculateNormals(const int ind_size, const GLuint* indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals);
+	void genCube(std::vector<glm::vec3>& structure, std::vector<unsigned int>& indices);
+	void genSolidDodecahedron(std::vector<glm::vec3>& structure, std::vector<unsigned int>& indices);
+	void calculateNormals(const std::vector<unsigned int> indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals);
 
 public:
 	Renderer(const Renderer&) = delete;

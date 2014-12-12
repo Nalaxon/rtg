@@ -166,77 +166,11 @@ void Renderer::createNaiveStructure(void)
 	CheckError("GenVertexArrays(1, vaoId");
 	glBindVertexArray(vaoId);
 	CheckError("BindVertexArray(vaoId)");
-
-	float a = (1 + std::sqrt(5.0f)) / 2;
-	//dodecahedron
 	
 	std::vector<glm::vec3> structure;
-	
-	//Back
-	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //0
-	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //1
-	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //2
-	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //3
+	std::vector<unsigned int> indices;
 
-        //Buttom
-	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //4
-	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //5
-	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f)); //6
-	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //7
-		
-		//Left
-	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f)); //8
-	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //9
-	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //10
-	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //11
-
-		//Right
-	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //12
-	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //13
-	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //14
-	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //15
-
-		//Top
-	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //16
-	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //17
-	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //18
-	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //19
-
-		//Front
-	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //20
-	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //21
-	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //22
-	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //23 
-	
-	/*
-	//basic quader
-	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));     //foreground
-	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));     //foreground-1.0f, -1.0f, -1.0f,
-	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));
-	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));
-	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));     //background
-	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));
-	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
-	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));
-
-		//edge fore and background
-	structure.push_back(glm::vec3(0.0f, 1 / a, -a));
-	structure.push_back(glm::vec3(0.0f, -1 / a, -a));
-	structure.push_back(glm::vec3(0.0f, 1 / a, a));
-	structure.push_back(glm::vec3(0.0f, -1 / a, a));
-
-		//edges top buttom
-	structure.push_back(glm::vec3(-1 / a, a, 0.0f));
-	structure.push_back(glm::vec3(1 / a, a, 0.0f));
-	structure.push_back(glm::vec3(-1 / a, -a, 0.0f));
-	structure.push_back(glm::vec3(1 / a, -a, 0.0f));
-
-		//edges left right
-	structure.push_back(glm::vec3(-a, 0.0f, -1 / a));
-	structure.push_back(glm::vec3(-a, 0.0f, 1 / a));
-	structure.push_back(glm::vec3(a, 0.0f, -1 / a));
-	structure.push_back(glm::vec3(a, 0.0f, 1 / a));
-	*/
+	genCube(structure, indices);
 
 	
 	glGenBuffers(1, &vStructureId);
@@ -249,17 +183,6 @@ void Renderer::createNaiveStructure(void)
 	CheckError("Bufferdata()");
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	CheckError("VertexAttribPointer(0, ");
-
-	const GLuint indices[] = {
-
-		0, 2, 1, 0, 3, 2,  //back
-		6, 4, 5, 6, 7, 4,  //button
-		8, 9, 10, 8, 11, 9,  //left
-		12, 13, 14, 12, 15, 13,  //right
-		16, 18, 17, 16, 19, 18,  //top 
-		23, 20, 21, 23, 22, 20  //front
-		
-	};
 	
 	glGenBuffers(1, &indexId);
 	CheckError("GenBuffers(1, indexId)");
@@ -268,13 +191,13 @@ void Renderer::createNaiveStructure(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 	CheckError("BindBuffer(indexId");
 
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 	CheckError("BufferData(indices)");
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	CheckError("VertexAttribPointer(1, ");
 
 	std::vector<glm::vec3> normals;
-	calculateNormals(sizeof(indices), indices, structure, normals);
+	calculateNormals(indices, structure, normals);
 
 	glGenBuffers(1, &normalId);
 	CheckError("GenBuffers(1, normalId)");
@@ -312,10 +235,6 @@ void Renderer::createNaiveStructure(void)
 	glUniform4fv(f_rId, 1, glm::value_ptr(f_r));
 
 	//Calculate of matrices
-	//ProjectionMatrix = {1/ (view.aspect * view.h), 0, 0, 0,
-	//                             0, 1/view.h, 0, 0,
-	//                             0, 0, - (view.z_f + view.z_n) / (view.z_f - view.z_n), -1,
-	//                             0, 0, - (2 * view.z_f * view.z_n) / (view.z_f - view.z_n), 0};
 	ProjectionMatrix = glm::perspective(view.beta, view.aspect, view.z_n, view.z_f);
 
 	ViewMatrix =  glm::lookAt(
@@ -353,11 +272,9 @@ void Renderer::render()
 		LastTime = Now;
 
 	delta = float(Now - LastTime);
-	RotateAngle += 45.0f * ((float)(Now) / (CLOCKS_PER_SEC));
-	//RotateAngle += 45.0f * ((float)(Now - LastTime) / CLOCKS_PER_SEC);
 	
 	//CubeAngle = RotateAngle * static_cast<float>(3.14159265358979323846 / 180);
-	CubeAngle = static_cast<float>(PI / 30) * ((float)(Now) / (CLOCKS_PER_SEC));
+	CubeAngle = -static_cast<float>(PI / 30) * ((float)(Now) / (CLOCKS_PER_SEC));
 	//std::cout << RotateAngle << " " << CubeAngle << std::endl;
 	LastTime = Now;
 
@@ -376,17 +293,15 @@ void Renderer::render()
 	context.swapBuffers();
 }
 
-
-void Renderer::calculateNormals(const int ind_size, const GLuint* indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals)
+void Renderer::calculateNormals(const std::vector<unsigned int> indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals)
 {
 	static int offset = 3;
 
 	glm::fvec3 v1, v2, v3, a, b, cross;
 
-	//std::cout << "size of indices: " << ind_size << "sizeof(unsigned int) " << sizeof(GLuint) <<  "  size of vertices: " << vertices.size() << std::endl;
+	//std::cout << "size of indices: " << ind_size << "sizeof(unsigned int) "  << sizeof(unsigned int) << " / " << sizeof(GLuint) <<  "  size of vertices: " << vertices.size() << std::endl;
 
-	int i;
-	for (unsigned int i = 0; (i < ind_size / sizeof(GLuint)); i += offset)
+	for (unsigned int i = 0; i < indices.size(); i += offset)
 	{
 		
 		v1 = vertices[indices[i]];
@@ -424,4 +339,63 @@ void  Renderer::CheckError(const std::string funcName)
 		getchar();
 		exit(-1);
 	}
+}
+
+void Renderer::genCube(std::vector<glm::vec3>& structure, std::vector<unsigned int>& indices)
+{
+	//Back
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //0
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //1
+	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //2
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //3
+
+	//Buttom
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //4
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //5
+	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f)); //6
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //7
+
+	//Left
+	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f)); //8
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //9
+	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //10
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //11
+
+	//Right
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //12
+	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //13
+	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //14
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //15
+
+	//Top
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));   //16
+	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //17
+	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //18
+	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //19
+
+	//Front
+	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //20
+	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));   //21
+	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //22
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));  //23
+
+
+	//Index
+	indices.push_back(0); indices.push_back(2); indices.push_back(1);
+	indices.push_back(0); indices.push_back(3); indices.push_back(2);  //back
+	indices.push_back(6); indices.push_back(4); indices.push_back(5);
+	indices.push_back(6); indices.push_back(7); indices.push_back(4);  //button
+	indices.push_back(8); indices.push_back(9); indices.push_back(10);
+	indices.push_back(8); indices.push_back(11); indices.push_back(9);  //left
+	indices.push_back(12); indices.push_back(13); indices.push_back(14);
+	indices.push_back(12); indices.push_back(15); indices.push_back(13);  //right
+	indices.push_back(16); indices.push_back(18); indices.push_back(17);
+	indices.push_back(16); indices.push_back(19); indices.push_back(18);  //top 
+	indices.push_back(23); indices.push_back(20); indices.push_back(21);
+	indices.push_back(23); indices.push_back(22); indices.push_back(20);  //front
+}
+
+void Renderer::genSolidDodecahedron(std::vector<glm::vec3>& structure, std::vector<unsigned int>& indices)
+{
+
 }
