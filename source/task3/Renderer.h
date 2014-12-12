@@ -50,6 +50,7 @@ private:
 	GLuint lightId;
 	glm::mat4 ModelMatrix;
 	GLint uniMVP;
+	std::vector<glm::vec3> structure;
 	glm::mat4 ViewMatrix;
 	glm::mat4 ProjectionMatrix;
 	Camera camera;

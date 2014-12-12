@@ -167,10 +167,11 @@ void Renderer::createNaiveStructure(void)
 	glBindVertexArray(vaoId);
 	CheckError("BindVertexArray(vaoId)");
 	
-	std::vector<glm::vec3> structure;
+	//std::vector<glm::vec3> structure;
 	std::vector<unsigned int> indices;
 
-	genCube(structure, indices);
+	//genCube(structure, indices);
+	genSolidDodecahedron(structure, indices);
 
 	
 	glGenBuffers(1, &vStructureId);
@@ -211,7 +212,7 @@ void Renderer::createNaiveStructure(void)
 	CheckError("VertexAttribPointer(2, ");
 	
 	//initial camera position and orientation
-	camera.p_camera = glm::vec3(0.0f, 3.0f, 3.0f);
+	camera.p_camera = glm::vec3(0.0f, 0.0f, -12.0f);
 	camera.p_lookat = glm::vec3(0.0f, 0.0f, 0.0f);
 	camera.v_up = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -285,7 +286,7 @@ void Renderer::render()
 
 	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix*ViewMatrix*ModelMatrix));
 
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, structure.size()*sizeof(glm::vec3), GL_UNSIGNED_INT, (void*)0);
 	
 	
 	//glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -313,12 +314,12 @@ void Renderer::calculateNormals(const std::vector<unsigned int> indices, const s
 		cross = glm::cross(a, b);
 		cross = glm::normalize(cross);
 
-		//std::cout << "v1(" << v1.x << "," << v1.y << "," << v1.z << ") / v2(";
-		//std::cout << v2.x << "," << v2.y << "," << v2.z << ") / v3(";
-		//std::cout << v3.x << "," << v3.y << "," << v3.z << ")" << std::endl;
+		std::cout << "v1(" << v1.x << "," << v1.y << "," << v1.z << ") / v2(";
+		std::cout << v2.x << "," << v2.y << "," << v2.z << ") / v3(";
+		std::cout << v3.x << "," << v3.y << "," << v3.z << ")" << std::endl;
 		 
-		//std::cout << "a(" << a.x << "," << a.y << "," << a.z << ") / b(" << b.x << "," << b.y << "," << b.z << ")" << std::endl;
-		//std::cout << "X(" << cross.x << "," << cross.y << "," << cross.z << std::endl;
+		std::cout << "a(" << a.x << "," << a.y << "," << a.z << ") / b(" << b.x << "," << b.y << "," << b.z << ")" << std::endl;
+		std::cout << "X(" << cross.x << "," << cross.y << "," << cross.z << std::endl;
 
 		normals.push_back(cross);  //overtake normalised norm
 		if (i % 2 == 0)
@@ -395,7 +396,130 @@ void Renderer::genCube(std::vector<glm::vec3>& structure, std::vector<unsigned i
 	indices.push_back(23); indices.push_back(22); indices.push_back(20);  //front
 }
 
+void genPentagonIndexing(std::vector<unsigned int> &indices, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int v5)
+{
+	indices.push_back(v1); indices.push_back(v2); indices.push_back(v3);
+	indices.push_back(v1); indices.push_back(v3); indices.push_back(v4);
+	indices.push_back(v1); indices.push_back(v4); indices.push_back(v5);
+}
+
 void Renderer::genSolidDodecahedron(std::vector<glm::vec3>& structure, std::vector<unsigned int>& indices)
 {
-
+	float a = (1 + std::sqrt(5.0f)) / 2;
+	
+	//front right 
+	structure.push_back(glm::vec3(0.0f, 1.0f / a, -a));  //green front up
+	structure.push_back(glm::vec3(0.0f, -1.0f / a, -a));  //green front down
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));   //orange front right down
+	structure.push_back(glm::vec3(a, 0.0f, -1.0f / a));     //pink front right 
+	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));    //orange front right up
+	
+	//front left
+	structure.push_back(glm::vec3(-a, 0.0f, -1.0f / a));  //pink front left
+	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //orange front left down
+	structure.push_back(glm::vec3(0.0f, -1.0f / a, -a));  //green front down
+	structure.push_back(glm::vec3(0.0f, 1.0f / a, -a));  //green front up
+	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //orange front left up
+	
+	//front up
+	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //orange front left up
+	structure.push_back(glm::vec3(0.0f, 1.0f / a, -a));  //green front up
+	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));    //orange front right up
+	structure.push_back(glm::vec3(1.0f / a, a, 0.0f));    //blue right up
+	structure.push_back(glm::vec3(-1.0f / a, a, 0.0f));    //blue left up
+	
+	//front down
+	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //orange front left down
+	structure.push_back(glm::vec3(-1.0f / a, -a, 0.0f));    //blue left down
+	structure.push_back(glm::vec3(1.0f / a, -a, 0.0f));    //blue right down
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));   //orange front right down
+	structure.push_back(glm::vec3(0.0f, -1.0f / a, -a));  //green front down
+	
+	//right up
+	structure.push_back(glm::vec3(1.0f, 1.0f, -1.0f));    //orange front right up
+	structure.push_back(glm::vec3(a, 0.0f, -1.0f / a));     //pink front right
+	structure.push_back(glm::vec3(a, 0.0f, 1.0f / a));     //pink back right
+	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //orange back right up
+	structure.push_back(glm::vec3(1.0f / a, a, 0.0f));    //blue right up
+	
+	//right down
+	structure.push_back(glm::vec3(1.0f, -1.0f, -1.0f));   //orange front right down
+	structure.push_back(glm::vec3(1.0f / a, -a, 0.0f));    //blue right down
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //orange back right down
+	structure.push_back(glm::vec3(a, 0.0f, 1.0f / a));     //pink back right
+	structure.push_back(glm::vec3(a, 0.0f, -1.0f / a));     //pink front right
+	
+	//back up
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));  //orange back left up
+	structure.push_back(glm::vec3(-1.0f / a, a, 0.0f));    //blue left up
+	structure.push_back(glm::vec3(1.0f / a, a, 0.0f));    //blue right up
+	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //orange back right up
+	structure.push_back(glm::vec3(0.0f, 1.0f / a, a));  //green back up
+	
+	//back down
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //orange back left down
+	structure.push_back(glm::vec3(-1.0f / a, -a, 0.0f));    //blue left down
+	structure.push_back(glm::vec3(1.0f / a, -a, 0.0f));    //blue right down
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //orange back right down
+	structure.push_back(glm::vec3(0.0f, -1.0f / a, a));  //green back down
+	
+	//back left
+	structure.push_back(glm::vec3(-a, 0.0f, 1.0f / a));  //pink back left
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //orange back left down
+	structure.push_back(glm::vec3(0.0f, -1.0f / a, a));  //green back down
+	structure.push_back(glm::vec3(0.0f, 1.0f / a, a));  //green back up
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));  //orange back left up
+	
+	//back right
+	structure.push_back(glm::vec3(0.0f, 1.0f / a, a));  //green back up
+	structure.push_back(glm::vec3(0.0f, -1.0f / a, a));  //green back down
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //orange back right down
+	structure.push_back(glm::vec3(a, 0.0f, 1.0f / a));     //pink back right 
+	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //orange back right up
+    
+	//left up
+	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));  //orange back left up
+	structure.push_back(glm::vec3(-1.0f / a, a, 0.0f));    //blue left up
+	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //orange front left up
+	structure.push_back(glm::vec3(-a, 0.0f, -1.0f / a));     //pink front left
+	structure.push_back(glm::vec3(-a, 0.0f, 1.0f / a));     //pink back left
+	
+	//left down
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //orange back left down
+	structure.push_back(glm::vec3(-a, 0.0f, 1.0f / a));     //pink back left
+	structure.push_back(glm::vec3(-a, 0.0f, -1.0f / a));     //pink front left
+	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //orange front left down
+	structure.push_back(glm::vec3(-1.0f / a, -a, 0.0f));    //blue left down
+	
+	
+	//*****
+	//index
+	//*****
+	//front left
+	genPentagonIndexing(indices, 0, 1, 2, 3, 4);
+	
+	//front right
+	genPentagonIndexing(indices, 5, 6, 7, 8, 9);
+	
+	//front up
+	genPentagonIndexing(indices, 10, 11, 12, 13, 14);
+	//front down
+	genPentagonIndexing(indices, 15, 16, 17, 18, 19);
+	//right up
+	genPentagonIndexing(indices, 20, 21, 22, 23, 24);
+	//right down
+	genPentagonIndexing(indices, 25, 26, 27, 28, 29);
+	//left up
+	genPentagonIndexing(indices, 30, 31, 32, 33, 34);
+	//left down
+	genPentagonIndexing(indices, 35, 36, 37, 38, 39);
+	//back right
+	genPentagonIndexing(indices, 40, 41, 42, 43, 44);
+	//back left
+	genPentagonIndexing(indices, 45, 46, 47 ,48, 49);
+	//back up
+	genPentagonIndexing(indices, 50, 51, 52, 53, 54);
+	//back down
+	genPentagonIndexing(indices, 55, 56, 57, 58, 59);
+	
 }
