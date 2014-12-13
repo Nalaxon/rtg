@@ -198,7 +198,7 @@ void Renderer::createNaiveStructure(void)
 	CheckError("VertexAttribPointer(1, ");
 
 	std::vector<glm::vec3> normals;
-	calculateNormals(indices, structure, normals);
+	calculateNormals(5, indices, structure, normals);
 
 	glGenBuffers(1, &normalId);
 	CheckError("GenBuffers(1, normalId)");
@@ -294,17 +294,16 @@ void Renderer::render()
 	context.swapBuffers();
 }
 
-void Renderer::calculateNormals(const std::vector<unsigned int> indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals)
+void Renderer::calculateNormals(const unsigned int corners, const std::vector<unsigned int> indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals)
 {
 	static int offset = 3;
-
+	unsigned int o = 0;
 	glm::fvec3 v1, v2, v3, a, b, cross;
 
+	normals.clear();
 	//std::cout << "size of indices: " << ind_size << "sizeof(unsigned int) "  << sizeof(unsigned int) << " / " << sizeof(GLuint) <<  "  size of vertices: " << vertices.size() << std::endl;
-
 	for (unsigned int i = 0; i < indices.size(); i += offset)
 	{
-		
 		v1 = vertices[indices[i]];
 		v2 = vertices[indices[i + 1]];
 		v3 = vertices[indices[i + 2]];
@@ -314,20 +313,20 @@ void Renderer::calculateNormals(const std::vector<unsigned int> indices, const s
 		cross = glm::cross(a, b);
 		cross = glm::normalize(cross);
 
-		std::cout << "v1(" << v1.x << "," << v1.y << "," << v1.z << ") / v2(";
-		std::cout << v2.x << "," << v2.y << "," << v2.z << ") / v3(";
-		std::cout << v3.x << "," << v3.y << "," << v3.z << ")" << std::endl;
+		//std::cout << "v1(" << v1.x << "," << v1.y << "," << v1.z << ") / v2(";
+		//std::cout << v2.x << "," << v2.y << "," << v2.z << ") / v3(";
+		//std::cout << v3.x << "," << v3.y << "," << v3.z << ")" << std::endl;
 		 
-		std::cout << "a(" << a.x << "," << a.y << "," << a.z << ") / b(" << b.x << "," << b.y << "," << b.z << ")" << std::endl;
-		std::cout << "X(" << cross.x << "," << cross.y << "," << cross.z << std::endl;
+		//std::cout << "a(" << a.x << "," << a.y << "," << a.z << ") / b(" << b.x << "," << b.y << "," << b.z << ")" << std::endl;
+		//std::cout << "X(" << cross.x << "," << cross.y << "," << cross.z << std::endl;
 
 		normals.push_back(cross);  //overtake normalised norm
-		if (i % 2 == 0)
+		
+		if (++o % (corners - 2) == 0)  // each face need (triangles + 2 normals)
 		{
 			normals.push_back(cross);
 			normals.push_back(cross);
 		}
-		
 	}
 }
 
@@ -398,14 +397,19 @@ void Renderer::genCube(std::vector<glm::vec3>& structure, std::vector<unsigned i
 
 void genPentagonIndexing(std::vector<unsigned int> &indices, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int v5)
 {
-	indices.push_back(v1); indices.push_back(v2); indices.push_back(v3);
-	indices.push_back(v1); indices.push_back(v3); indices.push_back(v4);
-	indices.push_back(v1); indices.push_back(v4); indices.push_back(v5);
+	indices.push_back(v1); indices.push_back(v3); indices.push_back(v2);
+	indices.push_back(v1); indices.push_back(v4); indices.push_back(v3);
+	indices.push_back(v1); indices.push_back(v5); indices.push_back(v4);
+	
+	//indices.push_back(v1); indices.push_back(v2); indices.push_back(v3);
+	//indices.push_back(v1); indices.push_back(v3); indices.push_back(v4);
+	//indices.push_back(v1); indices.push_back(v4); indices.push_back(v5);
 }
 
 void Renderer::genSolidDodecahedron(std::vector<glm::vec3>& structure, std::vector<unsigned int>& indices)
 {
 	float a = (1 + std::sqrt(5.0f)) / 2;
+	structure.clear();
 	
 	//front right 
 	structure.push_back(glm::vec3(0.0f, 1.0f / a, -a));  //green front up
@@ -491,16 +495,13 @@ void Renderer::genSolidDodecahedron(std::vector<glm::vec3>& structure, std::vect
 	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //orange front left down
 	structure.push_back(glm::vec3(-1.0f / a, -a, 0.0f));    //blue left down
 	
-	
 	//*****
 	//index
 	//*****
 	//front left
 	genPentagonIndexing(indices, 0, 1, 2, 3, 4);
-	
 	//front right
 	genPentagonIndexing(indices, 5, 6, 7, 8, 9);
-	
 	//front up
 	genPentagonIndexing(indices, 10, 11, 12, 13, 14);
 	//front down

@@ -60,7 +60,7 @@ private:
 	void  CheckError(const std::string funcName);
 	void genCube(std::vector<glm::vec3>& structure, std::vector<unsigned int>& indices);
 	void genSolidDodecahedron(std::vector<glm::vec3>& structure, std::vector<unsigned int>& indices);
-	void calculateNormals(const std::vector<unsigned int> indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals);
+	void calculateNormals(const unsigned int corners, const std::vector<unsigned int> indices, const std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals);
 
 public:
 	Renderer(const Renderer&) = delete;
