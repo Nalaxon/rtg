@@ -15,9 +15,9 @@ Renderer::Renderer(GL::platform::Window& window)
 	: context(window)
 {
 	glClearColor(0.1f, 0.3f, 1.0f, 1.0f);
-	//glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
+	//glEnable(GL_CULL_FACE);
 
 	window.attach(this);
 }
@@ -224,14 +224,14 @@ void Renderer::createNaiveStructure(void)
 	view.h = -2.0f * view.z_n * tan(view.beta / 2.0f);
 
 	//light posiiton
-	glm::vec3 light = camera.p_camera;
+	glm::vec3 light = camera.p_camera;  //glm::vec3(12.0f, 0.0f, 0.0f);
 	lightId = glGetUniformLocation(programmID, "light");
 	CheckError("GetUniformLocation(light");
 	glUniform3fv(lightId, 1, glm::value_ptr(light));
 	CheckError("Uniform1fv(lightId");
 
 	//diffuse reflectance
-	glm::vec4 f_r = glm::vec4(0.5f, 0.5f, 0.3f, 1.0f) / PI;
+	glm::vec4 f_r = glm::vec4(5.f, 5.0f, 3.f, 1.0f) / PI;
 	GLint f_rId = glGetUniformLocation(programmID, "f_r");
 	glUniform4fv(f_rId, 1, glm::value_ptr(f_r));
 
@@ -249,6 +249,8 @@ void Renderer::createNaiveStructure(void)
 	//upload matrix to shader
 	uniMVP = glGetUniformLocation(programmID, "MVP");
 	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix*ViewMatrix*ModelMatrix));
+
+	
 
 	// Enable depth test
 	//glEnable(GL_DEPTH_TEST);
@@ -286,11 +288,12 @@ void Renderer::render()
 
 	glUniformMatrix4fv(uniMVP, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix*ViewMatrix*ModelMatrix));
 
+	//upload model matrix to gpu
+	GLuint uniModel = glGetUniformLocation(programmID, "modelM");
+	glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+
 	glDrawElements(GL_TRIANGLES, structure.size()*sizeof(glm::vec3), GL_UNSIGNED_INT, (void*)0);
-	
-	
-	//glDrawArrays(GL_TRIANGLES, 0, 36);
-	
+		
 	context.swapBuffers();
 }
 
@@ -459,42 +462,42 @@ void Renderer::genSolidDodecahedron(std::vector<glm::vec3>& structure, std::vect
 	structure.push_back(glm::vec3(1.0f / a, a, 0.0f));    //blue right up
 	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //orange back right up
 	structure.push_back(glm::vec3(0.0f, 1.0f / a, a));  //green back up
-	
+		
 	//back down
 	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //orange back left down
-	structure.push_back(glm::vec3(-1.0f / a, -a, 0.0f));    //blue left down
-	structure.push_back(glm::vec3(1.0f / a, -a, 0.0f));    //blue right down
-	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //orange back right down
 	structure.push_back(glm::vec3(0.0f, -1.0f / a, a));  //green back down
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //orange back right down
+	structure.push_back(glm::vec3(1.0f / a, -a, 0.0f));    //blue right down
+	structure.push_back(glm::vec3(-1.0f / a, -a, 0.0f));    //blue left down
 	
 	//back left
 	structure.push_back(glm::vec3(-a, 0.0f, 1.0f / a));  //pink back left
-	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //orange back left down
-	structure.push_back(glm::vec3(0.0f, -1.0f / a, a));  //green back down
-	structure.push_back(glm::vec3(0.0f, 1.0f / a, a));  //green back up
 	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));  //orange back left up
+	structure.push_back(glm::vec3(0.0f, 1.0f / a, a));  //green back up
+	structure.push_back(glm::vec3(0.0f, -1.0f / a, a));  //green back down
+	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //orange back left down
 	
 	//back right
-	structure.push_back(glm::vec3(0.0f, 1.0f / a, a));  //green back up
 	structure.push_back(glm::vec3(0.0f, -1.0f / a, a));  //green back down
-	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //orange back right down
-	structure.push_back(glm::vec3(a, 0.0f, 1.0f / a));     //pink back right 
+	structure.push_back(glm::vec3(0.0f, 1.0f / a, a));  //green back up
 	structure.push_back(glm::vec3(1.0f, 1.0f, 1.0f));    //orange back right up
-    
+	structure.push_back(glm::vec3(a, 0.0f, 1.0f / a));     //pink back right
+	structure.push_back(glm::vec3(1.0f, -1.0f, 1.0f));   //orange back right down
+	 
 	//left up
 	structure.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));  //orange back left up
-	structure.push_back(glm::vec3(-1.0f / a, a, 0.0f));    //blue left up
-	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //orange front left up
-	structure.push_back(glm::vec3(-a, 0.0f, -1.0f / a));     //pink front left
 	structure.push_back(glm::vec3(-a, 0.0f, 1.0f / a));     //pink back left
+	structure.push_back(glm::vec3(-a, 0.0f, -1.0f / a));     //pink front left
+	structure.push_back(glm::vec3(-1.0f, 1.0f, -1.0f));  //orange front left up
+	structure.push_back(glm::vec3(-1.0f / a, a, 0.0f));    //blue left up
 	
 	//left down
 	structure.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));  //orange back left down
-	structure.push_back(glm::vec3(-a, 0.0f, 1.0f / a));     //pink back left
-	structure.push_back(glm::vec3(-a, 0.0f, -1.0f / a));     //pink front left
-	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //orange front left down
 	structure.push_back(glm::vec3(-1.0f / a, -a, 0.0f));    //blue left down
-	
+	structure.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));  //orange front left down
+	structure.push_back(glm::vec3(-a, 0.0f, -1.0f / a));     //pink front left
+	structure.push_back(glm::vec3(-a, 0.0f, 1.0f / a));     //pink back left
+
 	//*****
 	//index
 	//*****
