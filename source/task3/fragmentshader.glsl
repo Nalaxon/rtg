@@ -11,7 +11,8 @@ void main(void)
 
 {
   
-   vec4 l =  vec4(1.0f) * max(dot(FragmentNormal, (vec4(light, 1.0f) - pos)), 0);
+   vec4 l =  vec4(1.0f) * max(dot(FragmentNormal, normalize(vec4(light, 1.0f) - pos)), 0.0f);
 
-   Color = f_r * l;
+   Color =  f_r * l;
+   Color.w = 1.0f;
 }
